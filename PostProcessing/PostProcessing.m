@@ -82,6 +82,9 @@ R.misc.body_weight = model_info.mass*9.81;
 % Calculate orthosis forces
 [R] = PostProcess_orthosis(model_info,f_casadi,R);
 
+% Calculate joint reaction forces
+[R] = PostProcess_get_JRA(model_info,f_casadi,R);
+
 % Please implement additional post-processing steps as functions following
 % the template, and call them from here.
 % [R] = PostProcessing_subfunction_template(model_info,f_casadi,R);
