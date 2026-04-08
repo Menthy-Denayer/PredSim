@@ -1,4 +1,4 @@
-function [] = PostProcessing(S,model_info,f_casadi)
+function [R] = PostProcessing(S,model_info,f_casadi)
 % --------------------------------------------------------------------------
 % PostProcessing
 %   This function calls subfunctions that post-process the simulation
@@ -17,8 +17,10 @@ function [] = PostProcessing(S,model_info,f_casadi)
 % Original author: Lars D'Hondt
 % Original date: May/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Menthy Denayer
+% Last edit date: 02/April/2026
+% - Added R as output
+% - Added bushing forces post processing
 % --------------------------------------------------------------------------
 
 % load results
@@ -81,6 +83,11 @@ R.misc.body_weight = model_info.mass*9.81;
 
 % Calculate orthosis forces
 [R] = PostProcess_orthosis(model_info,f_casadi,R);
+
+% Calculate bushing forces (added by Menthy)
+if(isfield(model_info.ExtFunIO,"BUSHINGs"))
+    [R] = PostProcess_get_bushing_forces(model_info,f_casadi,R);
+end
 
 % Please implement additional post-processing steps as functions following
 % the template, and call them from here.
