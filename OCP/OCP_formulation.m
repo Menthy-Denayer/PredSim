@@ -328,6 +328,11 @@ if (S.subject.synergies)
     SynW_lk         = MX.sym('SynW_lk',length(idx_m_l),S.subject.NSyn_l);
 end
 
+% % If interaction forces penalty, define CasADi variables (added by Menthy)
+% if (S.subject.PenalizeBushings)
+%     Fbushingsj = MX.sym('Fbushingsj', length(fieldnames(model_info.ExtFunIO.BUSHINGs))/2);
+% end
+
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
 ineq_constr_deact = {}; % Initialize inequality constraint vector
@@ -572,6 +577,41 @@ if (S.subject.synergies) && (S.subject.TrackSynW)
     J = J + J_TrackSynW;
 else
     J_TrackSynW = 0;
+end
+
+% interaction forces penalty (added by Menthy)
+% does not include orthosis moments & forces, but normally the bushings only 
+% depend on the relative distance, so kinematics
+if(S.subject.PenalizeBushings)
+    % Compute predicted bushings
+    Qsk_nsc = Qsk.*scaling.Qs';                                             % unscale kinematics
+    Qdotsk_nsc = Qdotsk.*scaling.Qdots';                                    % unscale velocities
+    Qdotdotsk_nsc = Aj(:,d).*scaling.Qdotdots';                             % unscale accelerations
+
+    % Create zero input vector for external function, 
+    % does not include orthosis moments/forces, but need to add those if we want
+    % to use this force GRF tracking w/ other external forces/moments!
+    F_ext_input = MX(model_info.ExtFunIO.input.nInputs,1);
+    % Assign Qs
+    F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = Qsk_nsc;
+    % Assign Qdots
+    F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = Qdotsk_nsc;
+    % Assign Qdotdots (A)
+    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = Qdotdotsk_nsc;
+
+    % Evaluate external function
+    res = F(F_ext_input);                                                       % evaluate the external function
+    Foutk = full(res);
+    
+    % retrieve bushing forces & moments from external function
+    Nbushings = length(fieldnames(model_info.ExtFunIO.BUSHINGs))/2;
+    bushing_idxs = zeros(1,Nbushings*6);
+    for i = 1:Nbushings
+        bushing_idxs(6*i-5:6*i) = model_info.ExtFunIO.BUSHINGs.("bushing_body2_" + i);
+    end
+        
+    % add bushing forces & moments to the cost function
+    J = J + W.bushings * f_casadi.J_bushings(Foutk(bushing_idxs)) * h;
 end
 
 % Synergies: a - WH = 0
@@ -1030,158 +1070,7 @@ if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
     disp('Issue when reconstructing average speed')
 end
 
-%% Decompose optimal cost
-J_opt           = 0;
-E_cost          = 0;
-A_cost          = 0;
-Actu_cost       = 0;
-Qdotdot_cost    = 0;
-Pass_cost       = 0;
-vA_cost         = 0;
-dFTtilde_cost   = 0;
-QdotdotArm_cost = 0;
-Syn_cost        = 0;
-TrackSyn_cost   = 0;
-count           = 1;
-h_opt           = tf_opt/N;
-for k=1:N
-    for j=1:d
-        % Get muscle-tendon lengths, velocities, moment arms
-        [lMTkj_opt_all,vMTkj_opt_all,~] = ...
-            f_casadi.lMT_vMT_dM(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:));
-        % force equilibirum
-        [~,~,Fce_opt_all,Fpass_opt_all,Fiso_opt_all] = ...
-            f_casadi.forceEquilibrium_FtildeState_all_tendon(...
-            a_col_opt_unsc(count,:)',FTtilde_col_opt_unsc(count,:)',...
-            dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
-            full(vMTkj_opt_all),tensions);
-        % muscle-tendon kinematics
-        [~,lMtilde_opt_all] = f_casadi.FiberLength_TendonForce_tendon(...
-            FTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all));
-        [vM_opt_all,~] = f_casadi.FiberVelocity_TendonForce_tendon(...
-            FTtilde_col_opt_unsc(count,:)',...
-            dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
-            full(vMTkj_opt_all));
-        
-        % Bhargava et al. (2004)
-        if strcmp(S.metabolicE.model,'Bhargava2004')
-            [e_tot_all,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
-            a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
-            full(lMtilde_opt_all),...
-            full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
-            MuscleMass',pctsts,full(Fiso_opt_all),model_info.mass,S.metabolicE.tanh_b);
-        else
-            error('No energy model selected');
-        end
-        e_tot_opt_all = full(e_tot_all)';
-        
-        % passive moments
-        Tau_passkj = full(f_casadi.AllPassiveTorques_cost(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:)));
-
-        % objective function
-        J_opt = J_opt + 1/(dist_trav_opt)*(...
-            W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
-            W.a*B(j+1)          *(f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt + ...
-            W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
-            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
-            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
-            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
-            
-        if nq.torqAct > 0
-            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_torqAct*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
-
-            Actu_cost = Actu_cost + W.e_torqAct*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
-        end
-        if nq.arms > 0
-            J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
-
-            QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
-                (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
-        end
-
-        if (S.subject.synergies)
-            syn_constr_k_r = a_opt(k,idx_m_r) - SynH_r_opt(k,:)*SynW_r_opt;
-            syn_constr_k_l = a_opt(k,idx_m_l) - SynH_l_opt(k,:)*SynW_l_opt;
-            J_opt = J_opt + 1/(dist_trav_opt)*W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
-
-            Syn_cost = Syn_cost + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
-        end
-
-        E_cost = E_cost + W.E*B(j+1)*...
-            (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
-        A_cost = A_cost + W.a*B(j+1)*...
-            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
-        Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
-            (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
-        Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
-            (f_casadi.J_lim_torq(Tau_passkj))*h_opt;
-        vA_cost = vA_cost + W.slack_ctrl*B(j+1)*...
-            (f_casadi.J_muscles(vA_opt(k,:)))*h_opt;
-        dFTtilde_cost = dFTtilde_cost + W.slack_ctrl*B(j+1)*...
-            (f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt;
-        count = count + 1;
-    end
-end
-
-if (S.subject.synergies) && (S.subject.TrackSynW)
-    TrackSyn_cost = W.TrackSynW*f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
-    J_opt = J_opt + N/dist_trav_opt*TrackSyn_cost;
-end
-
-J_optf = full(J_opt);
-E_costf = full(E_cost);
-A_costf = full(A_cost);
-Arm_costf = full(Actu_cost);
-Qdotdot_costf = full(Qdotdot_cost);
-Pass_costf = full(Pass_cost);
-vA_costf = full(vA_cost);
-dFTtilde_costf = full(dFTtilde_cost);
-QdotdotArm_costf = full(QdotdotArm_cost);
-Syn_costf = full(Syn_cost);
-TrackSyn_costf = full(TrackSyn_cost);
-
-contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf];
-contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf]./J_optf*100;
-contributionCost.relativeValuesRound2 = ...
-    round(contributionCost.relativeValues,2);
-contributionCost.labels = {'metabolic energy','muscle activation',...
-    'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
-    'arm accelerations','synergy constraints','synergy weights tracking'};
-
-% assertCost should be 0
-assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
-    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf + N*TrackSyn_costf ));
-assertCost2 = abs(stats.iterations.obj(end) - J_optf);
-
-if assertCost > 1*10^(-S.solver.tol_ipopt)
-    disp('Issue when reconstructing optimal cost wrt sum of terms')
-    disp(['   Difference = ' num2str(assertCost)])
-end
-if assertCost2 > 1*10^(-S.solver.tol_ipopt)
-    disp('Issue when reconstructing optimal cost wrt stats')
-    disp(['   Difference = ' num2str(assertCost2)])
-end
-
-% % Test collocation function
-% [coll_eq_constr_opt,coll_ineq_constr1_opt,coll_ineq_constr2_opt,coll_ineq_constr3_opt,...
-%     coll_ineq_constr4_opt,coll_ineq_constr5_opt,coll_ineq_constr6_opt,Jall_opt] = f_coll_map(tf_opt,...
-%     a_opt(1:end-1,:)', a_col_opt', FTtilde_opt(1:end-1,:)', FTtilde_col_opt', Qs_opt(1:end-1,:)', ...
-%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', ...
-%     vA_opt', e_a_opt', dFTtilde_col_opt', qdotdot_col_opt');
-% 
-% Jall_sc_opt = full(sum(Jall_opt)/dist_trav_opt);
-% assertCost3 = abs(stats.iterations.obj(end) - Jall_sc_opt);
-% 
-% if assertCost3 > 1*10^(-S.solver.tol_ipopt)
-%     disp('Issue when reconstructing optimal cost wrt stats')
-%     disp(['   Difference = ' num2str(assertCost3)])
-% end
-
-%% Reconstruct full gait cycle
+%% Reconstruct full gait cycle (moved for GRF error computation)
 
 % joint accelerations controls on mesh points (2:N)
 qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
@@ -1263,8 +1152,7 @@ qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
 qddot_opt_unsc.rad = [qddot_opt_unsc.rad(end,:); qddot_opt_unsc.rad(1:end-1,:)];
 dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
 
-%% Gait cycle starts at right side initial contact
-
+%% Compute Optimal GRF (moved for GRF error computation)
 % Ground reaction forces at mesh points (1:N-1)
 Foutk_opt                   = zeros(size(q_opt_unsc.rad,1),F.nnz_out);
 for i = 1:size(q_opt_unsc.rad,1)
@@ -1283,6 +1171,277 @@ for i = 1:size(q_opt_unsc.rad,1)
 end
 GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total model_info.ExtFunIO.GRFs.left_total]);
 
+% compute optimal bushing forces
+if S.subject.PenalizeBushings
+    BushingF_opt = Foutk_opt(:,bushing_idxs);
+end
+
+%% Decompose optimal cost
+J_opt           = 0;
+E_cost          = 0;
+A_cost          = 0;
+Actu_cost       = 0;
+Qdotdot_cost    = 0;
+Pass_cost       = 0;
+vA_cost         = 0;
+dFTtilde_cost   = 0;
+QdotdotArm_cost = 0;
+Syn_cost        = 0;
+TrackSyn_cost   = 0;
+Bushings_cost   = 0;
+count           = 1;
+h_opt           = tf_opt/N;
+for k=1:N
+    for j=1:d
+        % Get muscle-tendon lengths, velocities, moment arms
+        [lMTkj_opt_all,vMTkj_opt_all,~] = ...
+            f_casadi.lMT_vMT_dM(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:));
+        % force equilibirum
+        [~,~,Fce_opt_all,Fpass_opt_all,Fiso_opt_all] = ...
+            f_casadi.forceEquilibrium_FtildeState_all_tendon(...
+            a_col_opt_unsc(count,:)',FTtilde_col_opt_unsc(count,:)',...
+            dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
+            full(vMTkj_opt_all),tensions);
+        % muscle-tendon kinematics
+        [~,lMtilde_opt_all] = f_casadi.FiberLength_TendonForce_tendon(...
+            FTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all));
+        [vM_opt_all,~] = f_casadi.FiberVelocity_TendonForce_tendon(...
+            FTtilde_col_opt_unsc(count,:)',...
+            dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
+            full(vMTkj_opt_all));
+        
+        % Bhargava et al. (2004)
+        if strcmp(S.metabolicE.model,'Bhargava2004')
+            [e_tot_all,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
+            a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
+            full(lMtilde_opt_all),...
+            full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
+            MuscleMass',pctsts,full(Fiso_opt_all),model_info.mass,S.metabolicE.tanh_b);
+        else
+            error('No energy model selected');
+        end
+        e_tot_opt_all = full(e_tot_all)';
+        
+        % passive moments
+        Tau_passkj = full(f_casadi.AllPassiveTorques_cost(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:)));
+
+        % objective function
+        J_opt = J_opt + 1/(dist_trav_opt)*(...
+            W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
+            W.a*B(j+1)          *(f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt + ...
+            W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
+            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
+            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
+            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
+            
+        if nq.torqAct > 0
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_torqAct*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
+
+            Actu_cost = Actu_cost + W.e_torqAct*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
+        end
+        if nq.arms > 0
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
+
+            QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
+                (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
+        end
+
+        if (S.subject.synergies)
+            syn_constr_k_r = a_opt(k,idx_m_r) - SynH_r_opt(k,:)*SynW_r_opt;
+            syn_constr_k_l = a_opt(k,idx_m_l) - SynH_l_opt(k,:)*SynW_l_opt;
+            J_opt = J_opt + 1/(dist_trav_opt)*W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
+
+            Syn_cost = Syn_cost + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
+        end
+
+        E_cost = E_cost + W.E*B(j+1)*...
+            (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
+        A_cost = A_cost + W.a*B(j+1)*...
+            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
+        Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
+            (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
+        Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
+            (f_casadi.J_lim_torq(Tau_passkj))*h_opt;
+        vA_cost = vA_cost + W.slack_ctrl*B(j+1)*...
+            (f_casadi.J_muscles(vA_opt(k,:)))*h_opt;
+        dFTtilde_cost = dFTtilde_cost + W.slack_ctrl*B(j+1)*...
+            (f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt;
+        
+        count = count + 1;
+    end
+end
+
+if (S.subject.synergies) && (S.subject.TrackSynW)
+    TrackSyn_cost = W.TrackSynW*f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
+    J_opt = J_opt + N/dist_trav_opt*TrackSyn_cost;
+end
+
+% Add bushing forces & moments to the cost function (added by Menthy)
+if(S.subject.PenalizeBushings)
+    Bushing_cost = W.bushings * sum(f_casadi.J_bushings(BushingF_opt')) * h_opt;
+    J_opt = J_opt + 1/(dist_trav_opt) * Bushing_cost;
+end
+
+J_optf = full(J_opt);
+E_costf = full(E_cost);
+A_costf = full(A_cost);
+Arm_costf = full(Actu_cost);
+Qdotdot_costf = full(Qdotdot_cost);
+Pass_costf = full(Pass_cost);
+vA_costf = full(vA_cost);
+dFTtilde_costf = full(dFTtilde_cost);
+QdotdotArm_costf = full(QdotdotArm_cost);
+Syn_costf = full(Syn_cost);
+TrackSyn_costf = full(TrackSyn_cost);
+BushingPenalty_costf = full(Bushings_cost);                                 % bushing penalty cost (added by Menthy)
+
+contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf,...
+    BushingPenalty_costf];                                                  % added bushing penalty cost (added by Menthy)
+contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf,...
+    BushingPenalty_costf]./J_optf*100;                                      % added bushing penalty cost (added by Menthy)
+contributionCost.relativeValuesRound2 = ...
+    round(contributionCost.relativeValues,2);
+contributionCost.labels = {'metabolic energy','muscle activation',...
+    'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
+    'arm accelerations','synergy constraints','synergy weights tracking',...
+    'bushing penalty'};                                                     % added bushing penalty cost (added by Menthy) 
+
+% assertCost should be 0
+assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
+    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf + N*TrackSyn_costf + ...
+    BushingPenalty_costf));                                                 % added bushing penalty cost (added by Menthy)  
+assertCost2 = abs(stats.iterations.obj(end) - J_optf);
+
+if assertCost > 1*10^(-S.solver.tol_ipopt)
+    disp('Issue when reconstructing optimal cost wrt sum of terms')
+    disp(['   Difference = ' num2str(assertCost)])
+end
+if assertCost2 > 1*10^(-S.solver.tol_ipopt)
+    disp('Issue when reconstructing optimal cost wrt stats')
+    disp(['   Difference = ' num2str(assertCost2)])
+end
+
+% % Test collocation function
+% [coll_eq_constr_opt,coll_ineq_constr1_opt,coll_ineq_constr2_opt,coll_ineq_constr3_opt,...
+%     coll_ineq_constr4_opt,coll_ineq_constr5_opt,coll_ineq_constr6_opt,Jall_opt] = f_coll_map(tf_opt,...
+%     a_opt(1:end-1,:)', a_col_opt', FTtilde_opt(1:end-1,:)', FTtilde_col_opt', Qs_opt(1:end-1,:)', ...
+%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', ...
+%     vA_opt', e_a_opt', dFTtilde_col_opt', qdotdot_col_opt');
+% 
+% Jall_sc_opt = full(sum(Jall_opt)/dist_trav_opt);
+% assertCost3 = abs(stats.iterations.obj(end) - Jall_sc_opt);
+% 
+% if assertCost3 > 1*10^(-S.solver.tol_ipopt)
+%     disp('Issue when reconstructing optimal cost wrt stats')
+%     disp(['   Difference = ' num2str(assertCost3)])
+% end
+
+% %% Reconstruct full gait cycle
+% 
+% % joint accelerations controls on mesh points (2:N)
+% qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
+% qddot_opt_unsc.rad = qdotdot_col_opt_unsc.rad(d:d:end,:);
+% 
+% if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+%     % Use symmetry to reconstruct 2nd half of the gait cycle
+% 
+%     idx_2nd_half_GC = N+1:2*N;
+% 
+%     % Qs
+%     q_opt_unsc.deg = [q_opt_unsc.deg(1:end,:); q_opt_unsc.deg(1:end,:)];
+%     q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsInvA) = q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsInvB);
+%     q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+%     q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.jointi.base_forward) = q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
+% 
+%     q_opt_unsc.rad = q_opt_unsc.deg;
+%     q_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = q_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+% 
+%     dist_trav_opt = dist_trav_opt*2;
+% 
+%     % Qdots
+%     qdot_opt_unsc.deg = [qdot_opt_unsc.deg(1:end,:); qdot_opt_unsc.deg(1:end,:)];
+%     qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvA) = qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvB);
+%     qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+% 
+%     qdot_opt_unsc.rad = qdot_opt_unsc.deg;
+%     qdot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qdot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+% 
+%     % Qdotdots
+%     qddot_opt_unsc.deg = [qddot_opt_unsc.deg; qddot_opt_unsc.deg(1:end,:)];
+%     qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvA) = qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvB);
+%     qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+% 
+%     qddot_opt_unsc.rad = qddot_opt_unsc.deg;
+%     qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+% 
+%     % Muscle activations
+%     a_opt_unsc = [a_opt_unsc(1:end,:); a_opt_unsc(1:end,:)];
+%     a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
+% 
+%     % Time derivatives of muscle activations
+%     vA_opt_unsc = [vA_opt_unsc(1:end,:); vA_opt_unsc(1:end,:)];
+%     vA_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = vA_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
+% 
+%     % Muscle-tendon forces
+%     FTtilde_opt_unsc = [FTtilde_opt_unsc(1:end,:); FTtilde_opt_unsc(1:end,:)];
+%     FTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
+% 
+%     % Time derivative of muscle-tendon force
+%     dFTtilde_opt_unsc = [dFTtilde_opt_unsc; dFTtilde_opt_unsc(1:end,:)];
+%     dFTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
+% 
+%     if nq.torqAct > 0
+%         % Torque actuator activations
+%         a_a_opt_unsc = [a_a_opt_unsc(1:end,:); a_a_opt_unsc(1:end,:)];
+%         a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvA) = a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvB);
+%         a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
+% 
+%         % Torque actuator excitations
+%         e_a_opt_unsc = [e_a_opt_unsc(1:end,:); e_a_opt_unsc(1:end,:)];
+%         e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvA) = e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvB);
+%         e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
+% 
+%     end
+% 
+%     % Synergy activations
+%     if (S.subject.synergies)
+%         SynH_r_opt_unsc_half = SynH_r_opt_unsc;
+%         SynH_l_opt_unsc_half = SynH_l_opt_unsc;
+%         SynH_r_opt_unsc = [SynH_r_opt_unsc_half; SynH_l_opt_unsc_half]; % mesh points
+%         SynH_l_opt_unsc = [SynH_l_opt_unsc_half; SynH_r_opt_unsc_half];
+%     end
+% 
+% end
+% 
+% % express slack controls on mesh points 1:N to be consistent
+% qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
+% qddot_opt_unsc.rad = [qddot_opt_unsc.rad(end,:); qddot_opt_unsc.rad(1:end-1,:)];
+% dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
+
+%% Gait cycle starts at right side initial contact
+
+% Ground reaction forces at mesh points (1:N-1)
+% Foutk_opt                   = zeros(size(q_opt_unsc.rad,1),F.nnz_out);
+% for i = 1:size(q_opt_unsc.rad,1)
+%     % Create zero input vector for external function
+%     F_ext_input = zeros(model_info.ExtFunIO.input.nInputs,1);
+%     % Assign Qs
+%     F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = q_opt_unsc.rad(i,:);
+%     % Assign Qdots
+%     F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = qdot_opt_unsc.rad(i,:);
+%     % Assign Qdotdots (A)
+%     F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = qddot_opt_unsc.rad(i,:);
+% 
+%     % Evaluate external function
+%     res = F(F_ext_input);
+%     Foutk_opt(i,:) = full(res);
+% end
+% GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total model_info.ExtFunIO.GRFs.left_total]);
+% 
 
 [idx_GC,idx_GC_base_forward_offset,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);
 

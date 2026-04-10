@@ -28,6 +28,7 @@ N_arms_dof = model_info.ExtFunIO.jointi.nq.arms;
 N_noarms_dof = model_info.ExtFunIO.jointi.nq.noArms;
 N_torq_act = model_info.ExtFunIO.jointi.nq.torqAct;
 N_pass_dof = model_info.ExtFunIO.jointi.nq.limTorq;
+N_bushings = length(fieldnames(model_info.ExtFunIO.BUSHINGs))/2;            % added by Menthy
 
 %% Normalized sum of squared values
 if N_arms_dof > 0
@@ -126,4 +127,13 @@ for i = 1:length(N_musc_cross)
     end
     f_casadi.(['musc_cross_' num2str(N_musc_cross(i))]) = Function(['musc_cross_' num2str(N_musc_cross(i))],{ma_temp_musc_cross,ft_temp_musc_cross},{J_sp_temp_musc_cross});
 end
+
+%% Sum of squared bushing values (non-normalized)
+% Function for bushing force penalty
+p_bushing = SX.sym('p_bushing',N_bushings * 6);
+J_temp_bushings = 0;
+for i=1:length(p_bushing)
+    J_temp_bushings = J_temp_bushings + p_bushing(i).^2;
+end
+f_casadi.J_bushings = Function('f_J_bushings',{p_bushing},{J_temp_bushings});
 end
