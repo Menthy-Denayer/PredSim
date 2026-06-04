@@ -328,6 +328,12 @@ if (S.subject.synergies)
     SynW_lk         = MX.sym('SynW_lk',length(idx_m_l),S.subject.NSyn_l);
 end
 
+% Muscle & joint stiffness, added by Menthy
+% KMj         = MX.sym('KMj', NMuscle);
+% KTj         = MX.sym('KMj', NMuscle);
+% lTtildej    = MX.sym('KMj', NMuscle);
+% KJj = 
+
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
 ineq_constr_deact = {}; % Initialize inequality constraint vector
@@ -383,6 +389,11 @@ for j=1:d
     else
         error('No energy model selected');
     end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Get muscle & tendon stiffness, added by Menthy
+    [KTj, KMj, lTtildej] = f_casadi.f_muscle_tendon_stiffness(akj(:,j+1),lMtildej,vMj,FTtildekj_nsc);
+    drdthetaj = f_casadi.f_dr_dtheta(Qskj_nsc(:,j+1));
+    KJj = f_casadi.f_joint_stiffness(KMj,KTj,FTtildekj_nsc,Fcej+Fpassj,lMTj,lTtildej,lMtildej,MAj,drdthetaj);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get passive joint torques for dynamics
     Tau_passj = f_casadi.AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));

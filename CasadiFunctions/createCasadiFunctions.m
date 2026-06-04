@@ -17,8 +17,8 @@ function [f_casadi] = createCasadiFunctions(S,model_info)
 % Original author: Tom Buurke
 % Original date: 02/12/2021
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Menthy Denayer
+% Last edit date: 04/June/2026
 % --------------------------------------------------------------------------
 
 %% Create generic casadi functions
@@ -35,6 +35,14 @@ f_casadi.forceEquilibrium_FtildeState_all_tendon = forceEquilibrium_FtildeState_
 f_casadi.FiberLength_TendonForce_tendon = FiberLength_TendonForce_tendon;
 f_casadi.FiberVelocity_TendonForce_tendon = FiberVelocity_TendonForce_tendon;
 f_casadi.lT_vT = lT_vT;
+
+%% Create Casadi functions for joint stiffness (added by Menthy)
+[f_muscle_tendon_stiffness, f_dr_dtheta, f_joint_stiffness] = createCasadi_JointStiffness(S,model_info);
+
+f_casadi.f_muscle_tendon_stiffness = f_muscle_tendon_stiffness;
+f_casadi.f_joint_stiffness = f_joint_stiffness;
+f_casadi.f_joint_stiffness = f_joint_stiffness;
+f_casadi.f_dr_dtheta = f_dr_dtheta;
 
 %% Create Casadi functions for angle-moment relation from ligaments
 [f_casadi.ligamentMoment, f_casadi.ligamentMoment_single,...
