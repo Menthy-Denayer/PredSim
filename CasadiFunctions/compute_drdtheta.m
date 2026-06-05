@@ -17,7 +17,7 @@ for i = 1:Nmuscles
     qdof = q(sampleIdxs,1);
 
     order = model_info.muscle_info.polyFit.MuscleInfo.muscle(i).order;
-    [~, ~,ddmat] = n_art_mat_3_cas_SX_7(qdof', nCoeffMat(order, Ndof), expoVal_all{order, Ndof});
+    [~, ~, ddmat] = n_art_mat_3_cas_SX_7(qdof', nCoeffMat(order, Ndof), expoVal_all{order, Ndof});
     coeff = model_info.muscle_info.polyFit.MuscleInfo.muscle(i).coeff;
 
     for j = 1:Ndof

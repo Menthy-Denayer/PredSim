@@ -285,6 +285,72 @@ if (S.subject.synergies)
     end
 end
 
+%% If Joint Stiffness Tracking: Assign Tracking Data, added by Menthy
+if(S.subject.TrackJointStiffness)
+    KJref_tot = getIK(S.subject.TrackingFileJointStiffness,model_info);         % load .mot file with tracking data
+    KJref_time = KJref_tot.time;                                                % extract tracking data time
+    Nmeshes = S.solver.N_meshes;                                                % define number of meshes
+
+    % check joints to track
+    if(strcmp(S.subject.IncludeTrackingJoints,'all'))                      
+        desir_coo_names = string(fieldnames(model_info.ExtFunIO.coordi));       % if tracking all joints, 
+    else
+        desir_coo_names = string(S.subject.IncludeTrackingJoints);              % if tracking only selected joints
+    end
+
+    % exclude joints to not track
+    if(isfield(S.subject,'ExcludeTrackingJoints'))
+        excludeBool = contains(desir_coo_names,S.subject.ExcludeTrackingJoints);
+        desir_coo_names = desir_coo_names(~excludeBool);
+    end
+
+    % create reference data
+    NtrackJoints = length(desir_coo_names);                                     % number of joints to track
+    Ndata = length(KJref_time);                                                 % size of the experimental data
+    KJref = zeros(Ndata,NtrackJoints);                                          % matrix to store tracking data  
+    for jointIdx = 1:NtrackJoints
+        KJref(:,jointIdx) = KJref_tot.(desir_coo_names(jointIdx));              % fill matrix with data
+    end
+
+    % resample to be ( Nmeshes + 1 ) x ( number of joints to track )
+    KJrefsync = interp1(linspace(1,Nmeshes,Ndata),KJref,linspace(1,Nmeshes,Nmeshes),'spline','extrap');
+
+    % assign kinematics tracking weights
+    if(~isfield(W,"jointStiffnessTracking"))
+        W.jointStiffnessTracking = repmat(W.jointStiffnessTracking,NtrackJoints,1); % fill weights with ones if none specified
+    elseif(iscell(W.jointStiffnessTracking))
+        WjointStiffnessTrack = ones(NtrackJoints,1);
+        if(mod(size(W.jointStiffnessTracking,2),2) > 0)                             % check each key is followed by a value
+            disp("Each key should be followed by a weight value!")
+        else
+            Ncells = size(W.jointStiffnessTracking,2)/2;                            % number of key cells    
+            for c = 1:Ncells                                                        % loop over key cells
+                keyCell = W.jointStiffnessTracking{1+(c-1)*2};                      % current keys with same weight
+                Nkeys = size(keyCell,2);
+                for k = 1:Nkeys                                                     % loop over keys in cell array
+                    key = keyCell{k};
+                    if(strcmp(key,'all'))                                           % if key is 'all', set all weight values to the value following 'all'
+                        WjointStiffnessTrack(:) = W.jointStiffnessTracking{c*2};
+                    else
+                        [~,idx] = find(contains(desir_coo_names,key));              % if key is another char, find it inside the list of coordinates to get the right position
+                        if(~isempty(idx))
+                            WjointStiffnessTrack(idx) = W.jointStiffnessTracking{c*2};         % assign the weight value
+                        else
+                            disp(key + " is not a valid key")
+                        end
+                    end
+                end
+            end
+        end
+        W.jointStiffnessTracking = WjointStiffnessTrack;
+    else
+        disp("Weights for joint stiffness tracking should be a cell array!")
+    end
+
+    model_coo_names = fieldnames(model_info.ExtFunIO.coordi);               % get the names of the coordinates
+    [~,desir_joint_idx] = ismember(desir_coo_names,model_coo_names);        % get desired joint indices  
+end
+
 %% OCP: collocation equations
 % Define CasADi variables for static parameters
 tfk         = MX.sym('tfk'); % MX variable for final time
@@ -328,11 +394,11 @@ if (S.subject.synergies)
     SynW_lk         = MX.sym('SynW_lk',length(idx_m_l),S.subject.NSyn_l);
 end
 
-% Muscle & joint stiffness, added by Menthy
-% KMj         = MX.sym('KMj', NMuscle);
-% KTj         = MX.sym('KMj', NMuscle);
-% lTtildej    = MX.sym('KMj', NMuscle);
-% KJj = 
+% If tracking joint stiffness, add symbolic variable for kinematic
+% tracking, for each joint to track, added by Menthy
+if S.subject.TrackJointStiffness
+    KJj_track = MX.sym('KJsk_track', NtrackJoints, Nmeshes);
+end
 
 J           = 0; % Initialize cost function
 eq_constr   = {}; % Initialize equality constraint vector
@@ -390,10 +456,22 @@ for j=1:d
         error('No energy model selected');
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Get muscle & tendon stiffness, added by Menthy
-    [KTj, KMj, lTtildej] = f_casadi.f_muscle_tendon_stiffness(akj(:,j+1),lMtildej,vMj,FTtildekj_nsc);
-    drdthetaj = f_casadi.f_dr_dtheta(Qskj_nsc(:,j+1));
-    KJj = f_casadi.f_joint_stiffness(KMj,KTj,FTtildekj_nsc,Fcej+Fpassj,lMTj,lTtildej,lMtildej,MAj,drdthetaj);
+    % Track Joint Stiffness, added by Menthy
+    if(S.subject.TrackJointStiffness)
+        % Compute muscle/tendon stiffness
+        [KTj, KMj, lTtildej] = f_casadi.f_muscle_tendon_stiffness(akj(:,j+1),lMtildej,vMj,FTj);
+        
+        % Compute derivative of muscle moment arms
+        drdthetaj = f_casadi.f_dr_dtheta(Qskj_nsc(:,j+1));
+        
+        % Compute joint stiffness
+        KJj = f_casadi.f_joint_stiffness(KMj,KTj,FTj,Fcej+Fpassj,lMTj,lTtildej,lMtildej,MAj,drdthetaj);
+        
+        KJj_des = KJj(desir_joint_idx(desir_joint_idx > 0));                                % only interested in data to track
+        track_err = KJj_track(:,j)'-KJj_des;                                                % compute the tracking error
+        J_TrackJointStiffness = f_casadi.J_kin(track_err,W.JointStiffnessTracking);         % compute tracking cost
+        J = J + B(j+1) * J_TrackJointStiffness * h;
+    end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get passive joint torques for dynamics
     Tau_passj = f_casadi.AllPassiveTorques(Qskj_nsc(:,j+1),Qdotskj_nsc(:,j+1));
@@ -607,6 +685,9 @@ end
 if (S.subject.synergies)
     coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
 end
+if S.subject.TrackJointStiffness
+    coll_input_vars_def = [coll_input_vars_def,{KJj_track}];                % add joint stiffness tracking symbolic variable
+end
 
 f_coll = Function('f_coll',coll_input_vars_def,...
         {eq_constr, ineq_constr_deact, ineq_constr_act,...
@@ -624,6 +705,11 @@ if nq.torqAct > 0
 end
 if (S.subject.synergies)    
     coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
+end
+
+% if tracking joint stiffness is enabled: add reference joint stiffness to the mapping input
+if S.subject.TrackJointStiffness
+    coll_input_vars_eval = [coll_input_vars_eval,{KJrefsync'}];            % add grf reference data to mapping
 end
 
 coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));

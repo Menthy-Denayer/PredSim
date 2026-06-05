@@ -29,7 +29,8 @@ Atendonsc = tendon_stiff;
 Atendon = ones(size(a,1),1)*Atendonsc;
 
 % Inverse tendon force-length characteristic
-lTtilde = log(5*(fse + 0.25 - shift))./Atendon + 0.995;
+FTtilde = fse./FMo;
+lTtilde = log(5*(FTtilde + 0.25 - shift))./Atendon + 0.995;
 
 % define muscle lengths
 vMtilde = vM./vMmax;
@@ -39,7 +40,7 @@ kt = Ftparam(1);
 c1 = Ftparam(2);
 c2 = Ftparam(3);
 
-tendon_stiff = kt*tendon_stiff;
+% tendon_stiff = kt*tendon_stiff;
 
 dfse = c1 * tendon_stiff * exp((lTtilde - c2).*tendon_stiff);
 dfse = dfse .* FMo ./ lTs;

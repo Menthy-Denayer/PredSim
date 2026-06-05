@@ -1,4 +1,4 @@
-function [] = PostProcessing(S,model_info,f_casadi)
+function [R] = PostProcessing(S,model_info,f_casadi)
 % --------------------------------------------------------------------------
 % PostProcessing
 %   This function calls subfunctions that post-process the simulation
@@ -81,6 +81,9 @@ R.misc.body_weight = model_info.mass*9.81;
 
 % Calculate orthosis forces
 [R] = PostProcess_orthosis(model_info,f_casadi,R);
+
+% Calculate joint stiffness
+[R] = PostProcess_joint_stiffness(model_info,f_casadi,R);
 
 % Please implement additional post-processing steps as functions following
 % the template, and call them from here.
