@@ -51,7 +51,11 @@ S.orthosis.settings = {};
 S.subject.adapt_IG_pelvis_y = 0;
 
 % save computername
-S.misc.computername = getenv('COMPUTERNAME');
+if ispc
+    S.misc.computername = getenv('COMPUTERNAME');
+elseif isunix
+    S.misc.computername = getenv('HOSTNAME');
+end
 
 % save path to repo
 S.misc.main_path = pathRepo;
@@ -73,6 +77,10 @@ if ~isempty(varargin)
     if isfile(reference_path)
         disp(['Initialising settings from "',reference_path,'".'])
         run(reference_path);
+    % If given path directly links to settings file
+    elseif(isfile(varargin{1}))
+        disp(['Initialising settings from "',varargin{1},'".'])
+        run(varargin{1});
     else
         warning(['Could not initialise from "',reference_path,'". ',...
             'Ignoring input argument "',varargin{1},'".']);

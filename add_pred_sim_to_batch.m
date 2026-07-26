@@ -54,6 +54,9 @@ else
     myCluster = parcluster;
 end
 
+% Change cluster location
+% myCluster.JobStorageLocation = getenv('VSC_DATA') + "/matlab_job_storage";
+
 % Adapt number of threads if needed
 N_threads = myCluster.NumThreads;
 if isfield(S.solver,'N_threads') && S.solver.N_threads > N_threads
@@ -67,7 +70,7 @@ catch
 end
 
 % Add job to batch
-batch(myCluster,PredSim_fun,0,{S,osim_path},'CurrentFolder',S.misc.main_path,...
+batch(myCluster,PredSim_fun,3,{S,osim_path},'CurrentFolder',S.misc.main_path,...
     'AdditionalPaths',additional_paths);
 
 % Return optional outputs

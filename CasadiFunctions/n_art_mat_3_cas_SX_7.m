@@ -1,4 +1,4 @@
-function [mat,diff_mat_q,diff2_mat_q] = n_art_mat_3_cas_SX_7(q, nr_coefficients, expoVal)
+function [mat,diff_mat_q,diff2_mat_q] = n_art_mat_3_cas_SX_7(q, nr_coefficients,expoVal)
 % This function returns the polynomials for approximating the muscle-tendon
 % lengths, velocities and moment-arms.
 %

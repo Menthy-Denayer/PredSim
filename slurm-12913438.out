@@ -1,0 +1,102 @@
+Picked up JAVA_TOOL_OPTIONS: -Xmx50079989760
+Using MATLAB prefdir: /user/brussel/112/vsc11236/.matlab/R2024a
+Created /user/brussel/112/vsc11236/.matlab/R2024a/javalibrarypath.txt containing:
+/apps/brussel/RL9/zen5-ib/software/OpenSim/4.5.2-foss-2024a-MATLAB-2024a-r6/sdk/lib
+Picked up JAVA_TOOL_OPTIONS: -Xmx50079989760
+Opening log file:  /user/brussel/112/vsc11236/java.log.46320
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2024 The MathWorks, Inc.
+             R2024a Update 6 (24.1.0.2689473) 64-bit (glnxa64)
+                               July 29, 2024
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+BLAS: trying environment BLAS_VERSION...
+BLAS: loading /apps/brussel/RL9/zen5-ib/software/OpenBLAS/0.3.27-GCC-13.3.0/lib64/libopenblas.so
+BLAS: loaded /apps/brussel/RL9/zen5-ib/software/OpenBLAS/0.3.27-GCC-13.3.0/lib64/libopenblas.so@0x15286345a100
+LAPACK: trying environment LAPACK_VERSION...
+LAPACK: loading /apps/brussel/RL9/zen5-ib/software/OpenBLAS/0.3.27-GCC-13.3.0/lib64/libopenblas.so
+LAPACK: loaded /apps/brussel/RL9/zen5-ib/software/OpenBLAS/0.3.27-GCC-13.3.0/lib64/libopenblas.so@0x15286345a100
+[Warning: Unable to get git hash. It is advised to get PredSim through GitHub to
+have version control and to receive future updates.] 
+[> In get_git_hash (line 42)
+In initializeSettings (line 48)
+In run_parallel_batch_on_VSC_cluster (line 60)] 
+[Warning: No corresponding remote branch, see : ] 
+[> In get_git_hash (line 61)
+In initializeSettings (line 48)
+In run_parallel_batch_on_VSC_cluster (line 60)] 
+Initialising settings from "/vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim/Subjects/SUBJ11_Dhondt2024_3seg/settings_SUBJ11_Dhondt2024_3seg.m".
+
+S = 
+
+  struct with fields:
+
+          metabolicE: [1x1 struct]
+                misc: [1x1 struct]
+        post_process: []
+              solver: [1x1 struct]
+             subject: [1x1 struct]
+             weights: []
+            orthosis: [1x1 struct]
+    OpenSimADOptions: []
+              bounds: [1x1 struct]
+
+
+osim_path =
+
+    '/vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim/Subjects/SUBJ11_Dhondt2024_3seg/weighted/SUBJ11_Dhondt2024_3seg_weighted1kg.osim'
+
+
+osim_path =
+
+    '/vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim/Subjects/SUBJ11_Dhondt2024_3seg/weighted/SUBJ11_Dhondt2024_3seg_weighted2kg.osim'
+
+
+osim_path =
+
+    '/vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim/Subjects/SUBJ11_Dhondt2024_3seg/weighted/SUBJ11_Dhondt2024_3seg_weighted3kg.osim'
+
+
+osim_path =
+
+    '/vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim/Subjects/SUBJ11_Dhondt2024_3seg/weighted/SUBJ11_Dhondt2024_3seg_weighted4kg.osim'
+
+
+osim_path =
+
+    '/vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim/Subjects/SUBJ11_Dhondt2024_3seg/weighted/SUBJ11_Dhondt2024_3seg_weighted5kg.osim'
+
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwfl.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwi18n.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwmcicore.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_conc_common.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_log.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwcpp11compat.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwboost_log.so.1.85.0)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwboost_thread.so.1.85.0)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_filesystem.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libicui18n.so.76)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwcppmicroservices.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_feature.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libCppMicroServices.so.3.8.11)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwboost_serialization.so.1.85.0)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwflcertificates.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_threadpool.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwinstall_cpputil.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwopcmodel.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwflstoragevfs.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwinstall_cppinstrset_processor.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwinstall_cppinstrset.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwflstorageprovider.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwflnetwork.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_eventmgr_client.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwinstall_ddux.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwflhttpclient_core.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen5-ib/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node701/temp/5191-71cd-d7c1-9f71/v2026.7.0.6/_tempinstaller_glnxa64/bin/glnxa64/libmwddux_loggingapi.so)
+LAPACK: unloading libraries
+BLAS: unloading libraries

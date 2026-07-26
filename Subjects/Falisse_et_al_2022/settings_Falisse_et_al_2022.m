@@ -12,13 +12,13 @@
 
 S.subject.name = 'Falisse_et_al_2022';
 
-S.misc.forward_velocity = 1.33;
+% S.misc.forward_velocity = 1.33;
+S.misc.forward_velocity = 1.25;
 
 
 S.subject.mtp_type = '2022paper';
 S.subject.set_stiffness_coefficient_selected_dofs = {'mtp_angle',25};
 S.subject.set_damping_coefficient_selected_dofs = {'mtp_angle',2};
-
 
 % to prevent body segments from clipping into eachother
 S.bounds.distanceConstraints(1).point1 = 'calcn_r';
@@ -51,4 +51,33 @@ S.bounds.distanceConstraints(5).direction = 'xz';
 S.bounds.distanceConstraints(5).lower_bound = 0.1;
 S.bounds.distanceConstraints(5).upper_bound = 2;
 
+% %% Add knee exoskeleton
+% % select orthosis function
+% exo1.function_name = 'kneeExoBryan2020';
 
+% % average, optimal values Franks et al. (2020)
+% exo1.stiffness_onset = 0.026;                                                    % [%]
+% exo1.stiffness_offset = 0.267;                                                   % [%]
+% exo1.stiffness = 0.009;                                                          % [Nm/kg/deg]
+% exo1.peak_time = 0.59;                                                           % [%]
+% exo1.rise_time = 0.214;                                                          % [%]
+% exo1.fall_time = 0.095;                                                          % [%]
+% exo1.peak_torque = 0.279;                                                        % [Nm/kg]
+% exo1.damping_onset = 0.798;                                                      % [%]
+% exo1.damping_offset = 0.969;                                                      % [%]
+% exo1.damping = 2.176;                                                            % [Nm/rad/s]
+
+% % general exo settings
+% exo1.upper_body = 'femur';
+% exo1.lower_body = 'tibia';
+% exo1.joint_name = 'knee_angle_';
+% exo1.isFullGaitCycle = true;
+% exo1.bodymass = 62;
+
+% % add orthosis on right side
+% exo1.left_right = 'r';
+% S.orthosis.settings{1} = exo1;
+
+% % add the same orthosis on left side
+% exo1.left_right = 'l';
+% S.orthosis.settings{2} = exo1;

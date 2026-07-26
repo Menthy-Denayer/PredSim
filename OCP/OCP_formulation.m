@@ -19,8 +19,8 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 % Original author: Dhruv Gupta and Lars D'Hondt
 % Original date: January-May/2022
 %
-% Last edit by: Bram Van Den Bosch
-% Last edit date: 23/Sept/2024
+% Last edit by: Menthy Denayer
+% Last edit date: 08/June/2026
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')
@@ -45,7 +45,7 @@ pathmain = pwd;
 % Loading external functions.
 setup.derivatives =  'AD'; % Algorithmic differentiation
 cd(S.misc.subject_path)
-F  = external('F',S.misc.external_function);
+F  = external('F', fullfile(S.misc.subject_path, S.misc.external_function));
 cd(pathmain);
 
 %% Collocation Scheme
@@ -285,6 +285,148 @@ if (S.subject.synergies)
     end
 end
 
+%% If Kinematics Tracking: Assign Tracking Data
+if(S.subject.TrackKin)
+    Qref_tot = getIK(S.subject.TrackingFileKinematics,model_info);              % load .mot file with tracking data
+    Qref_time = Qref_tot.time;                                                  % extract tracking data time
+    Nmeshes = S.solver.N_meshes;                                                % define number of meshes
+    
+    % check joints to track
+    if(strcmp(S.subject.IncludeTrackingJoints,'all'))                      
+        desir_coo_names = string(fieldnames(model_info.ExtFunIO.coordi));       % if tracking all joints, 
+    else
+        desir_coo_names = string(S.subject.IncludeTrackingJoints);              % if tracking only selected joints
+    end
+    
+    % exclude joints to not track
+    if(isfield(S.subject,'ExcludeTrackingJoints'))
+        excludeBool = contains(desir_coo_names,S.subject.ExcludeTrackingJoints);
+        desir_coo_names = desir_coo_names(~excludeBool);
+    end
+
+    % create reference data
+    NtrackJoints = length(desir_coo_names);                                     % number of joints to track
+    Ndata = length(Qref_time);                                                  % size of the experimental data
+    Qref = zeros(Ndata,NtrackJoints);                                           % matrix to store tracking data  
+    for jointIdx = 1:NtrackJoints
+        Qref(:,jointIdx) = Qref_tot.(desir_coo_names(jointIdx));                % fill matrix with data
+    end
+    
+    % resample to be ( Nmeshes + 1 ) x ( number of joints to track )
+    Qrefsync = interp1(linspace(1,Nmeshes,Ndata),Qref,linspace(1,Nmeshes,Nmeshes),'spline','extrap');
+
+    % assign kinematics tracking weights
+    if(~isfield(W,"kinematicsTracking"))
+        W.kinematicsTracking = repmat(W.kinematicsTracking,NtrackJoints,1);     % fill weights with ones if none specified
+    elseif(iscell(W.kinematicsTracking))
+        WkinTrack = ones(NtrackJoints,1);
+        if(mod(size(W.kinematicsTracking,2),2) > 0)                             % check each key is followed by a value
+            disp("Each key should be followed by a weight value!")
+        else
+            Ncells = size(W.kinematicsTracking,2)/2;                            % number of key cells    
+            for c = 1:Ncells                                                    % loop over key cells
+                keyCell = W.kinematicsTracking{1+(c-1)*2};                      % current keys with same weight
+                Nkeys = size(keyCell,2);
+                for k = 1:Nkeys                                                 % loop over keys in cell array
+                    key = keyCell{k};
+                    if(strcmp(key,'all'))                                       % if key is 'all', set all weight values to the value following 'all'
+                        WkinTrack(:) = W.kinematicsTracking{c*2};
+                    else
+                        [~,idx] = find(contains(desir_coo_names,key));          % if key is another char, find it inside the list of coordinates to get the right position
+                        if(~isempty(idx))
+                            WkinTrack(idx) = W.kinematicsTracking{c*2};         % assign the weight value
+                        else
+                            disp(key + " is not a valid key")
+                        end
+                    end
+                end
+            end
+        end
+        W.kinematicsTracking = WkinTrack;
+    else
+        disp("Weights for kinematics tracking should be a cell array!")
+    end
+end
+
+%% If GRF Tracking: Assign Tracking Data
+if(S.subject.TrackGRF)
+    GRFref_tot = getGRF(S.subject.TrackingFileGRF,S.subject.TrackingGRFs);  % load .mot/.sto file with tracking data
+    GRFref_time = GRFref_tot.time;                                          % extract tracking data time
+    Nmeshes = S.solver.N_meshes;                                            % define number of meshes
+
+    % create reference data
+    NGRF = length(S.subject.TrackingGRFs);                                  % number of joints to track
+    Ndata = length(GRFref_time);                                            % size of the experimental data
+    GRFref = zeros(Ndata,NGRF);                                             % matrix to store tracking data  
+    for grfIdx = 1:NGRF
+        GRFref(:,grfIdx) = GRFref_tot.(S.subject.TrackingGRFs{grfIdx});     % fill matrix with data
+    end
+    
+    % resample to be ( Nmeshes ) x ( number of grfs to track )
+    GRFrefsync = interp1(linspace(1,Nmeshes,Ndata),GRFref,linspace(1,Nmeshes,Nmeshes),'spline','extrap');
+    
+    % define GRF indices to compare
+    GRFlabels = S.subject.TrackingGRFs;                                     % labels of GRFs to track
+    GRFIdxs = zeros(NGRF/2,1);                                              % indices of GRFs in external function
+
+    % check which forces to compare (assume left & right same case)
+    for i = 1:NGRF/2
+        if(any(contains(GRFlabels{i},"vx")))
+            GRFIdxs(i) = 1;
+        elseif(any(contains(GRFlabels{i},"vy")))
+            GRFIdxs(i) = 2;
+        elseif(any(contains(GRFlabels{i},"vz")))                            % excluded for 2D models
+            GRFIdxs(i) = 3;
+        end
+    end
+    
+    % parameters to remove swing phase from tracking
+    if(S.subject.TrackGRFexcludeSwing)
+        swing_Fmin   = 30;                                                  % N, stance threshold
+        swing_alpha  = 30;                                                  % steepness parameter
+        swing_w = 0;                                                        % subweight during swing
+        swing_a = (1-swing_w)/2;                                            % tanh parameter: mask = a * ( b + tanh( alpha * ( F - Fmin ) ) )
+        swing_b = (swing_w+1)/(2*swing_a);                                                    
+        
+        % Precompute numeric indices
+        idxRz = find(contains(GRFlabels,"_r_") & contains(GRFlabels,"vy"));
+        idxLz = find(contains(GRFlabels,"_l_") & contains(GRFlabels,"vy"));
+    end
+    
+    % assign GRF tracking weights
+    if(~isfield(W,"grfTracking"))
+        W.grfTracking = repmat(W.grfTracking,NGRF,1);                           % fill weights with ones if none specified
+    elseif(iscell(W.grfTracking))
+        WgrfTrack = ones(NGRF,1);
+        if(mod(size(W.grfTracking,2),2) > 0)                             % check each key is followed by a value
+            disp("Each key should be followed by a weight value!")
+        else
+            Ncells = size(W.grfTracking,2)/2;                            % number of key cells    
+            for c = 1:Ncells                                                    % loop over key cells
+                keyCell = W.grfTracking{1+(c-1)*2};                      % current keys with same weight
+                Nkeys = size(keyCell,2);
+                for k = 1:Nkeys                                                 % loop over keys in cell array
+                    key = keyCell{k};
+                    if(strcmp(key,'all'))                                       % if key is 'all', set all weight values to the value following 'all'
+                        WgrfTrack(:) = W.grfTracking{c*2};
+                    else
+                        [~,idx] = find(contains(GRFlabels,key));          % if key is another char, find it inside the list of coordinates to get the right position
+                        if(~isempty(idx))
+                            WgrfTrack(idx) = W.grfTracking{c*2};         % assign the weight value
+                        else
+                            disp(key + " is not a valid key")
+                        end
+                    end
+                end
+            end
+        end
+        W.grfTracking = WgrfTrack;
+    else
+        disp("Weights for GRF tracking should be a cell array!")
+    end
+    
+end
+
 %% If Joint Stiffness Tracking: Assign Tracking Data, added by Menthy
 if(S.subject.TrackJointStiffness)
     KJref_tot = getIK(S.subject.TrackingFileJointStiffness,model_info);         % load .mot file with tracking data
@@ -314,6 +456,9 @@ if(S.subject.TrackJointStiffness)
 
     % resample to be ( Nmeshes + 1 ) x ( number of joints to track )
     KJrefsync = interp1(linspace(1,Nmeshes,Ndata),KJref,linspace(1,Nmeshes,Nmeshes),'spline','extrap');
+    
+    % circshift so data aligns correctly (comparing with tkp1), I think should match shift from reference
+    % KJrefsync = circshift(KJrefsync, 2);
 
     % assign kinematics tracking weights
     if(~isfield(W,"jointStiffnessTracking"))
@@ -397,7 +542,19 @@ end
 % If tracking joint stiffness, add symbolic variable for kinematic
 % tracking, for each joint to track, added by Menthy
 if S.subject.TrackJointStiffness
-    KJj_track = MX.sym('KJsk_track', NtrackJoints, Nmeshes);
+    KJkp1_track = MX.sym('KJkp1_track', NtrackJoints);
+end
+
+% If tracking experimental kinematics, add symbolic variable for kinematic
+% tracking, for each joint to track
+if S.subject.TrackKin
+    Qsk_track = MX.sym('Qsk_track', NtrackJoints);
+end
+
+% If grf experimental kinematics, add symbolic variable for grf
+% tracking, for each GRF to track
+if S.subject.TrackGRF
+    GRFk_track = MX.sym('GRFk_track', NGRF);
 end
 
 J           = 0; % Initialize cost function
@@ -411,6 +568,8 @@ ineq_constr_syn = {}; % Initialize inequality constraint vector
 % Time step
 h = tfk/N;
 % Loop over collocation points
+% Added by Menthy: this loops over the collocation points between the time points
+% so terms related to tracking should be added outside (k denotes the time points)
 for j=1:d
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Unscale variables
@@ -454,23 +613,6 @@ for j=1:d
             MuscleMass',pctsts,Fisoj,model_info.mass,S.metabolicE.tanh_b);
     else
         error('No energy model selected');
-    end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Track Joint Stiffness, added by Menthy
-    if(S.subject.TrackJointStiffness)
-        % Compute muscle/tendon stiffness
-        [KTj, KMj, lTtildej] = f_casadi.f_muscle_tendon_stiffness(akj(:,j+1),lMtildej,vMj,FTj);
-        
-        % Compute derivative of muscle moment arms
-        drdthetaj = f_casadi.f_dr_dtheta(Qskj_nsc(:,j+1));
-        
-        % Compute joint stiffness
-        KJj = f_casadi.f_joint_stiffness(KMj,KTj,FTj,Fcej+Fpassj,lMTj,lTtildej,lMtildej,MAj,drdthetaj);
-        
-        KJj_des = KJj(desir_joint_idx(desir_joint_idx > 0));                                % only interested in data to track
-        track_err = KJj_track(:,j)'-KJj_des;                                                % compute the tracking error
-        J_TrackJointStiffness = f_casadi.J_kin(track_err,W.JointStiffnessTracking);         % compute tracking cost
-        J = J + B(j+1) * J_TrackJointStiffness * h;
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Get passive joint torques for dynamics
@@ -650,6 +792,19 @@ for j=1:d
         end
 
     end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Add negative muscle power penalty (added by Menthy)
+    if(S.subject.PenalizeNegMuscleWork)
+        % vM is positive (muscle lengthening)
+        vM_posj = 0.5 + 0.5*tanh(S.metabolicE.tanh_b*(vMj));
+        
+        % Penalize negative mechanical work
+        Wdotj = Fcej.*vMj.*vM_posj;
+        
+        % Add contribution to the cost function
+        J = J + W.NegMuscleWork * B(j+1) *(f_casadi.J_muscles_exp(Wdotj, 2))*h;
+    end
 
 end % End loop over collocation points
 
@@ -661,6 +816,172 @@ if (S.subject.synergies) && (S.subject.TrackSynW)
     J = J + J_TrackSynW;
 else
     J_TrackSynW = 0;
+end
+
+% Add tracking terms in the cost function if kinematics tracking is enabled
+% future improvement: I think its better to use Qskj and use the last element
+% so that everything is evaluated at tk+1
+if S.subject.TrackKin
+    Qsk_nsc = Qsk.*scaling.Qs';                                             % unscale kinematics
+    model_coo_names = fieldnames(model_info.ExtFunIO.coordi);               % get the names of the coordinates
+    [~,desir_joint_idx] = ismember(desir_coo_names,model_coo_names);        % get desired joint indices  
+    Qsk_des = Qsk_nsc(desir_joint_idx(desir_joint_idx > 0));                % only interested in data to track
+    track_err = Qsk_track-Qsk_des;                                          % compute the tracking error
+    J_TrackKin = f_casadi.J_kin(track_err,W.kinematicsTracking) * h;        % compute tracking cost
+    J = J + J_TrackKin;
+else
+    J_TrackKin = 0;
+end
+
+% Add tracking terms in the cost function if grf tracking is enabled
+% future improvement: I think its better to use Qskj and use the last element
+% so that everything is evaluated at tk+1
+if S.subject.TrackGRF
+    
+    % Compute predicted GRFs
+    Qsk_nsc = Qsk.*scaling.Qs';                                             % unscale kinematics
+    Qdotsk_nsc = Qdotsk.*scaling.Qdots';                                    % unscale velocities
+    Qdotdotsk_nsc = Aj(:,d).*scaling.Qdotdots';                             % unscale accelerations
+
+    % Create zero input vector for external function, 
+    % does not include orthosis moments/forces, but need to add those if we want
+    % to use this force GRF tracking w/ other external forces/moments!
+    F_ext_input = MX(model_info.ExtFunIO.input.nInputs,1);
+    % Assign Qs
+    F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = Qsk_nsc;
+    % Assign Qdots
+    F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = Qdotsk_nsc;
+    % Assign Qdotdots (A)
+    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = Qdotdotsk_nsc;
+
+    % Evaluate external function
+    res = F(F_ext_input);                                                       % evaluate the external function
+    Foutk = full(res);
+    GRFk = Foutk([model_info.ExtFunIO.GRFs.right_total(GRFIdxs) ...             % extract GRFs to compare
+        model_info.ExtFunIO.GRFs.left_total(GRFIdxs)]);
+    GRFerr = GRFk - GRFk_track;                                                 % tracking error 
+
+    % Create stance mask
+    stanceMask_k = MX.ones(NGRF,1);
+    
+    if(S.subject.TrackGRFexcludeSwing)
+        stanceMask_k(1:NGRF/2) = repmat(swing_a * (swing_b + tanh(swing_alpha * (GRFk_track(idxRz) - swing_Fmin))),1,NGRF/2);
+        stanceMask_k(NGRF/2+1:end) = repmat(swing_a * (swing_b + tanh(swing_alpha * (GRFk_track(idxLz) - swing_Fmin))),1,NGRF/2);
+    end
+    
+    J = J + f_casadi.J_grf(GRFerr, stanceMask_k, W.grfTracking) * h;            % contribution to cost function
+end
+
+% Track Joint Stiffness, added by Menthy
+if(S.subject.TrackJointStiffness)
+
+    % unscale kinematics
+    Qskp1_nsc = Qskj(:,d+1).*scaling.Qs';                                           % unscale kinematics
+    Qdotskp1_nsc = Qdotskj(:,d+1).*scaling.Qdots';                                  % unscale velocities
+
+    % Get muscle-tendon data
+    FTtildekp1_nsc = FTtildekj(:,d+1).*scaling.FTtilde';                            % tendon force
+    dFTtildekp1_nsc = dFTtildej(:,d).*scaling.dFTtilde;                            % tendon force derivative
+    [lMTkp1,vMTkp1,MAkp1] =  f_casadi.lMT_vMT_dM(Qskp1_nsc',Qdotskp1_nsc');        % muscle-tendon length, velocity & moment arm
+    [~,lMtildekp1] = f_casadi.FiberLength_TendonForce_tendon(FTtildekp1_nsc,lMTkp1);  % muscle-fibre length
+    [vMkp1,~] = f_casadi.FiberVelocity_TendonForce_tendon(...                      % get muscle fiber velocities
+        FTtildekp1_nsc,dFTtildekp1_nsc,lMTkp1,vMTkp1);
+
+    % Get muscle-tendon forces 
+    [~,FTkp1,Fcekp1,Fpasskp1,~] = ...
+        f_casadi.forceEquilibrium_FtildeState_all_tendon(akj(:,d+1),...
+        FTtildekp1_nsc,dFTtildekp1_nsc,...
+        lMTkp1,vMTkp1,tensions);
+
+    % Compute muscle/tendon stiffness
+    [KTkp1, KMkp1, lTtildekp1] = f_casadi.f_muscle_tendon_stiffness(akj(:,d+1),lMtildekp1,vMkp1,FTkp1);
+
+    % Compute derivative of muscle moment arms
+    drdthetakp1 = f_casadi.f_dr_dtheta(Qskp1_nsc);
+
+    % Compute joint stiffness
+    KJkp1 = f_casadi.f_joint_stiffness(KMkp1,KTkp1,FTkp1,Fcekp1+Fpasskp1,lMTkp1,lTtildekp1,lMtildekp1,MAkp1,drdthetakp1);
+
+    % Compute error
+    KJkp1_des = KJkp1(desir_joint_idx(desir_joint_idx > 0));                                % only interested in data to track
+    
+    % if(isfield(S.subject,"AllowedJointStiffnessDeviation"))
+    %     delta = S.subject.AllowedJointStiffnessDeviation;
+    %     wdev = f_casadi.f_smooth_window(KJkp1_des, KJkp1_track' * (1 - delta), KJkp1_track' * (1 + delta), 1e-2);
+    % else
+    %     wdev = 1;
+    % end
+    
+    track_err = KJkp1_track'-KJkp1_des;                                                     % compute the tracking error
+    J_TrackJointStiffness = f_casadi.J_kin(track_err,W.jointStiffnessTracking);             % compute tracking cost
+    J = J + J_TrackJointStiffness * h;
+end
+
+% interaction forces penalty (added by Menthy)
+% does not include orthosis moments & forces, but normally the bushings only 
+% depend on the relative distance, so kinematics
+if(S.subject.PenalizeBushings)
+    % Compute predicted bushings
+    Qsk_nsc = Qsk.*scaling.Qs';                                             % unscale kinematics
+    Qdotsk_nsc = Qdotsk.*scaling.Qdots';                                    % unscale velocities
+    Qdotdotsk_nsc = Aj(:,d).*scaling.Qdotdots';                             % unscale accelerations
+
+    % Create zero input vector for external function, 
+    % does not include orthosis moments/forces, but need to add those if we want
+    % to use this force GRF tracking w/ other external forces/moments!
+    F_ext_input = MX(model_info.ExtFunIO.input.nInputs,1);
+    % Assign Qs
+    F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = Qsk_nsc;
+    % Assign Qdots
+    F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = Qdotsk_nsc;
+    % Assign Qdotdots (A)
+    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = Qdotdotsk_nsc;
+
+    % Evaluate external function
+    res = F(F_ext_input);                                                       % evaluate the external function
+    Foutk = full(res);
+    
+    % retrieve bushing forces & moments from external function
+    Nbushings = length(fieldnames(model_info.ExtFunIO.BUSHINGs))/2;
+    bushing_idxs = zeros(1,Nbushings*6);
+    for i = 1:Nbushings
+        bushing_idxs(6*i-5:6*i) = model_info.ExtFunIO.BUSHINGs.("bushing_body2_" + i);
+    end
+        
+    % add bushing forces & moments to the cost function
+    J = J + W.bushings * f_casadi.J_bushings(Foutk(bushing_idxs)) * h;
+end
+
+% Add Centre of Mass acceleration penalty (added by Menthy)
+if(S.subject.PenalizeCOMacc)
+    % Compute predicted bushings
+    Qsk_nsc = Qsk.*scaling.Qs';                                             % unscale kinematics
+    Qdotsk_nsc = Qdotsk.*scaling.Qdots';                                    % unscale velocities
+    Qdotdotsk_nsc = Aj(:,d).*scaling.Qdotdots';                             % unscale accelerations
+
+    % Create zero input vector for external function, 
+    % does not include orthosis moments/forces, but need to add those if we want
+    % to use this force GRF tracking w/ other external forces/moments!
+    F_ext_input = MX(model_info.ExtFunIO.input.nInputs,1);
+    % Assign Qs
+    F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = Qsk_nsc;
+    % Assign Qdots
+    F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = Qdotsk_nsc;
+    % Assign Qdotdots (A)
+    F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = Qdotdotsk_nsc;
+
+    % Evaluate external function
+    res = F(F_ext_input);                                                   % evaluate the external function
+    Foutk = full(res);
+    GRFk_r = Foutk(model_info.ExtFunIO.GRFs.right_total(1));                % right anterior-posterior GRFs       
+    GRFk_l = Foutk(model_info.ExtFunIO.GRFs.left_total(1));                 % left anterior-posterior GRFs
+    GRFk_tot = GRFk_r + GRFk_l;                                             % total GRF vector
+    
+    % compute centre of mass acceleration
+    COMacc_APk = GRFk_tot/model_info.mass;
+        
+    % add bushing forces & moments to the cost function
+    J = J + W.COMacc * COMacc_APk^2 * h;
 end
 
 % Synergies: a - WH = 0
@@ -685,8 +1006,14 @@ end
 if (S.subject.synergies)
     coll_input_vars_def = [coll_input_vars_def,{SynH_rk,SynH_lk,SynW_rk,SynW_lk}];
 end
+if S.subject.TrackKin
+    coll_input_vars_def = [coll_input_vars_def,{Qsk_track}];                % add kinematics tracking symbolic variable
+end
+if S.subject.TrackGRF
+    coll_input_vars_def = [coll_input_vars_def,{GRFk_track}];               % add grf tracking symbolic variable
+end
 if S.subject.TrackJointStiffness
-    coll_input_vars_def = [coll_input_vars_def,{KJj_track}];                % add joint stiffness tracking symbolic variable
+    coll_input_vars_def = [coll_input_vars_def,{KJkp1_track}];              % add joint stiffness tracking symbolic variable
 end
 
 f_coll = Function('f_coll',coll_input_vars_def,...
@@ -707,10 +1034,22 @@ if (S.subject.synergies)
     coll_input_vars_eval = [coll_input_vars_eval,{SynH_r(:,1:end-1), SynH_l(:,1:end-1), SynW_r,SynW_l}];
 end
 
+% if tracking kinematics is enabled: add reference kinematics to the
+% mapping input
+if S.subject.TrackKin
+    coll_input_vars_eval = [coll_input_vars_eval,{Qrefsync'}];              % add kinematics reference data to mapping
+end
+
+% if tracking GRFs is enabled: add reference GRFs to the mapping input
+if S.subject.TrackGRF
+    coll_input_vars_eval = [coll_input_vars_eval,{GRFrefsync'}];            % add grf reference data to mapping
+end
+
 % if tracking joint stiffness is enabled: add reference joint stiffness to the mapping input
 if S.subject.TrackJointStiffness
-    coll_input_vars_eval = [coll_input_vars_eval,{KJrefsync'}];            % add grf reference data to mapping
+    coll_input_vars_eval = [coll_input_vars_eval,{KJrefsync'}];            % add joint stiffness reference data to mapping
 end
+
 
 coll_ineq_constr_distance = cell(1,length(ineq_constr_distance));
 
@@ -1127,158 +1466,7 @@ if assert_v_tg > 1*10^(-S.solver.tol_ipopt)
     disp('Issue when reconstructing average speed')
 end
 
-%% Decompose optimal cost
-J_opt           = 0;
-E_cost          = 0;
-A_cost          = 0;
-Actu_cost       = 0;
-Qdotdot_cost    = 0;
-Pass_cost       = 0;
-vA_cost         = 0;
-dFTtilde_cost   = 0;
-QdotdotArm_cost = 0;
-Syn_cost        = 0;
-TrackSyn_cost   = 0;
-count           = 1;
-h_opt           = tf_opt/N;
-for k=1:N
-    for j=1:d
-        % Get muscle-tendon lengths, velocities, moment arms
-        [lMTkj_opt_all,vMTkj_opt_all,~] = ...
-            f_casadi.lMT_vMT_dM(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:));
-        % force equilibirum
-        [~,~,Fce_opt_all,Fpass_opt_all,Fiso_opt_all] = ...
-            f_casadi.forceEquilibrium_FtildeState_all_tendon(...
-            a_col_opt_unsc(count,:)',FTtilde_col_opt_unsc(count,:)',...
-            dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
-            full(vMTkj_opt_all),tensions);
-        % muscle-tendon kinematics
-        [~,lMtilde_opt_all] = f_casadi.FiberLength_TendonForce_tendon(...
-            FTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all));
-        [vM_opt_all,~] = f_casadi.FiberVelocity_TendonForce_tendon(...
-            FTtilde_col_opt_unsc(count,:)',...
-            dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
-            full(vMTkj_opt_all));
-        
-        % Bhargava et al. (2004)
-        if strcmp(S.metabolicE.model,'Bhargava2004')
-            [e_tot_all,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
-            a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
-            full(lMtilde_opt_all),...
-            full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
-            MuscleMass',pctsts,full(Fiso_opt_all),model_info.mass,S.metabolicE.tanh_b);
-        else
-            error('No energy model selected');
-        end
-        e_tot_opt_all = full(e_tot_all)';
-        
-        % passive moments
-        Tau_passkj = full(f_casadi.AllPassiveTorques_cost(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:)));
-
-        % objective function
-        J_opt = J_opt + 1/(dist_trav_opt)*(...
-            W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
-            W.a*B(j+1)          *(f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt + ...
-            W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
-            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
-            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
-            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
-            
-        if nq.torqAct > 0
-            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_torqAct*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
-
-            Actu_cost = Actu_cost + W.e_torqAct*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
-        end
-        if nq.arms > 0
-            J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
-
-            QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
-                (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
-        end
-
-        if (S.subject.synergies)
-            syn_constr_k_r = a_opt(k,idx_m_r) - SynH_r_opt(k,:)*SynW_r_opt;
-            syn_constr_k_l = a_opt(k,idx_m_l) - SynH_l_opt(k,:)*SynW_l_opt;
-            J_opt = J_opt + 1/(dist_trav_opt)*W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
-
-            Syn_cost = Syn_cost + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
-        end
-
-        E_cost = E_cost + W.E*B(j+1)*...
-            (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
-        A_cost = A_cost + W.a*B(j+1)*...
-            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
-        Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
-            (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
-        Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
-            (f_casadi.J_lim_torq(Tau_passkj))*h_opt;
-        vA_cost = vA_cost + W.slack_ctrl*B(j+1)*...
-            (f_casadi.J_muscles(vA_opt(k,:)))*h_opt;
-        dFTtilde_cost = dFTtilde_cost + W.slack_ctrl*B(j+1)*...
-            (f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt;
-        count = count + 1;
-    end
-end
-
-if (S.subject.synergies) && (S.subject.TrackSynW)
-    TrackSyn_cost = W.TrackSynW*f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
-    J_opt = J_opt + N/dist_trav_opt*TrackSyn_cost;
-end
-
-J_optf = full(J_opt);
-E_costf = full(E_cost);
-A_costf = full(A_cost);
-Arm_costf = full(Actu_cost);
-Qdotdot_costf = full(Qdotdot_cost);
-Pass_costf = full(Pass_cost);
-vA_costf = full(vA_cost);
-dFTtilde_costf = full(dFTtilde_cost);
-QdotdotArm_costf = full(QdotdotArm_cost);
-Syn_costf = full(Syn_cost);
-TrackSyn_costf = full(TrackSyn_cost);
-
-contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf];
-contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
-    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
-    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf]./J_optf*100;
-contributionCost.relativeValuesRound2 = ...
-    round(contributionCost.relativeValues,2);
-contributionCost.labels = {'metabolic energy','muscle activation',...
-    'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
-    'arm accelerations','synergy constraints','synergy weights tracking'};
-
-% assertCost should be 0
-assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
-    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + QdotdotArm_costf + Syn_costf + N*TrackSyn_costf ));
-assertCost2 = abs(stats.iterations.obj(end) - J_optf);
-
-if assertCost > 1*10^(-S.solver.tol_ipopt)
-    disp('Issue when reconstructing optimal cost wrt sum of terms')
-    disp(['   Difference = ' num2str(assertCost)])
-end
-if assertCost2 > 1*10^(-S.solver.tol_ipopt)
-    disp('Issue when reconstructing optimal cost wrt stats')
-    disp(['   Difference = ' num2str(assertCost2)])
-end
-
-% % Test collocation function
-% [coll_eq_constr_opt,coll_ineq_constr1_opt,coll_ineq_constr2_opt,coll_ineq_constr3_opt,...
-%     coll_ineq_constr4_opt,coll_ineq_constr5_opt,coll_ineq_constr6_opt,Jall_opt] = f_coll_map(tf_opt,...
-%     a_opt(1:end-1,:)', a_col_opt', FTtilde_opt(1:end-1,:)', FTtilde_col_opt', Qs_opt(1:end-1,:)', ...
-%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', ...
-%     vA_opt', e_a_opt', dFTtilde_col_opt', qdotdot_col_opt');
-% 
-% Jall_sc_opt = full(sum(Jall_opt)/dist_trav_opt);
-% assertCost3 = abs(stats.iterations.obj(end) - Jall_sc_opt);
-% 
-% if assertCost3 > 1*10^(-S.solver.tol_ipopt)
-%     disp('Issue when reconstructing optimal cost wrt stats')
-%     disp(['   Difference = ' num2str(assertCost3)])
-% end
-
-%% Reconstruct full gait cycle
+%% Reconstruct full gait cycle (moved for GRF error computation)
 
 % joint accelerations controls on mesh points (2:N)
 qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
@@ -1360,8 +1548,7 @@ qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
 qddot_opt_unsc.rad = [qddot_opt_unsc.rad(end,:); qddot_opt_unsc.rad(1:end-1,:)];
 dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
 
-%% Gait cycle starts at right side initial contact
-
+%% Compute Optimal GRF (moved for GRF error computation)
 % Ground reaction forces at mesh points (1:N-1)
 Foutk_opt                   = zeros(size(q_opt_unsc.rad,1),F.nnz_out);
 for i = 1:size(q_opt_unsc.rad,1)
@@ -1380,7 +1567,462 @@ for i = 1:size(q_opt_unsc.rad,1)
 end
 GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total model_info.ExtFunIO.GRFs.left_total]);
 
+%% Decompose optimal cost
+J_opt           = 0;
+E_cost          = 0;
+A_cost          = 0;
+Actu_cost       = 0;
+Qdotdot_cost    = 0;
+Pass_cost       = 0;
+vA_cost         = 0;
+dFTtilde_cost   = 0;
+QdotdotArm_cost = 0;
+Syn_cost        = 0;
+TrackSyn_cost   = 0;
+TrackKin_cost   = 0;    
+TrackGRF_cost   = 0;
+Bushing_cost    = 0;
+Wmuscle_cost    = 0;
+COMacc_cost     = 0;
+TrackKJ_cost    = 0;
+count           = 1;
+h_opt           = tf_opt/N;
+for k=1:N
+    for j=1:d
+        % Get muscle-tendon lengths, velocities, moment arms
+        [lMTkj_opt_all,vMTkj_opt_all,~] = ...
+            f_casadi.lMT_vMT_dM(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:));
+        % force equilibirum
+        [~,~,Fce_opt_all,Fpass_opt_all,Fiso_opt_all] = ...
+            f_casadi.forceEquilibrium_FtildeState_all_tendon(...
+            a_col_opt_unsc(count,:)',FTtilde_col_opt_unsc(count,:)',...
+            dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
+            full(vMTkj_opt_all),tensions);
+        % muscle-tendon kinematics
+        [~,lMtilde_opt_all] = f_casadi.FiberLength_TendonForce_tendon(...
+            FTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all));
+        [vM_opt_all,~] = f_casadi.FiberVelocity_TendonForce_tendon(...
+            FTtilde_col_opt_unsc(count,:)',...
+            dFTtilde_col_opt_unsc(count,:)',full(lMTkj_opt_all),...
+            full(vMTkj_opt_all));
+        
+        % Bhargava et al. (2004)
+        if strcmp(S.metabolicE.model,'Bhargava2004')
+            [e_tot_all,~,~,~,~,~] = f_casadi.getMetabolicEnergySmooth2004all(...
+            a_col_opt_unsc(count,:)',a_col_opt_unsc(count,:)',...
+            full(lMtilde_opt_all),...
+            full(vM_opt_all),full(Fce_opt_all),full(Fpass_opt_all),...
+            MuscleMass',pctsts,full(Fiso_opt_all),model_info.mass,S.metabolicE.tanh_b);
+        else
+            error('No energy model selected');
+        end
+        e_tot_opt_all = full(e_tot_all)';
+        
+        % passive moments
+        Tau_passkj = full(f_casadi.AllPassiveTorques_cost(q_col_opt_unsc.rad(count,:),qdot_col_opt_unsc.rad(count,:)));
 
+        % objective function
+        J_opt = J_opt + 1/(dist_trav_opt)*(...
+            W.E*B(j+1)          *(f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt + ...
+            W.a*B(j+1)          *(f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt + ...
+            W.q_dotdot*B(j+1)   *(f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt + ...
+            W.pass_torq*B(j+1)  *(f_casadi.J_lim_torq(Tau_passkj))*h_opt + ... 
+            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(vA_opt(k,:)))*h_opt + ...
+            W.slack_ctrl*B(j+1) *(f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt);
+            
+        if nq.torqAct > 0
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.e_torqAct*B(j+1)      *(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt);
+
+            Actu_cost = Actu_cost + W.e_torqAct*B(j+1)*(f_casadi.J_torq_act(e_a_opt(k,:)))*h_opt;
+        end
+        if nq.arms > 0
+            J_opt = J_opt + 1/(dist_trav_opt)*(W.slack_ctrl*B(j+1) *(f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt);
+
+            QdotdotArm_cost = QdotdotArm_cost + W.slack_ctrl*B(j+1)*...
+                (f_casadi.J_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.armsi)))*h_opt;
+        end
+
+        if (S.subject.synergies)
+            syn_constr_k_r = a_opt(k,idx_m_r) - SynH_r_opt(k,:)*SynW_r_opt;
+            syn_constr_k_l = a_opt(k,idx_m_l) - SynH_l_opt(k,:)*SynW_l_opt;
+            J_opt = J_opt + 1/(dist_trav_opt)*W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
+
+            Syn_cost = Syn_cost + W.SynConstr * B(j+1) *(f_casadi.J_muscles([syn_constr_k_r,syn_constr_k_l]))*h_opt;
+        end
+
+        E_cost = E_cost + W.E*B(j+1)*...
+            (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
+        A_cost = A_cost + W.a*B(j+1)*...
+            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
+        Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
+            (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
+        Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
+            (f_casadi.J_lim_torq(Tau_passkj))*h_opt;
+        vA_cost = vA_cost + W.slack_ctrl*B(j+1)*...
+            (f_casadi.J_muscles(vA_opt(k,:)))*h_opt;
+        dFTtilde_cost = dFTtilde_cost + W.slack_ctrl*B(j+1)*...
+            (f_casadi.J_muscles(dFTtilde_col_opt(count,:)))*h_opt;
+        
+        count = count + 1;
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Add negative muscle power penalty (added by Menthy)
+        if(S.subject.PenalizeNegMuscleWork)
+            % vM is positive (muscle lengthening)
+            vM_pos_opt = 0.5 + 0.5*tanh(S.metabolicE.tanh_b*(full(vM_opt_all)));
+            
+            % Penalize negative mechanical work
+            Wdot_opt = full(Fce_opt_all).*full(vM_opt_all).*vM_pos_opt;
+            
+            % Add contribution to the cost function
+            Wmuscle_cost = Wmuscle_cost + W.NegMuscleWork * B(j+1) *(f_casadi.J_muscles_exp(Wdot_opt, 2))*h_opt;
+            J_opt = J_opt + 1/(dist_trav_opt) * W.NegMuscleWork * B(j+1) *(f_casadi.J_muscles_exp(Wdot_opt, 2))*h_opt;
+        end
+        
+    end
+end
+
+if (S.subject.synergies) && (S.subject.TrackSynW)
+    TrackSyn_cost = W.TrackSynW*f_casadi.TrackSynW(SynW_r_opt', SynW_l_opt');
+    J_opt = J_opt + N/dist_trav_opt*TrackSyn_cost;
+end
+
+% If kinematics tracking: reconstruct tracking cost
+% Warning: made for tracking entire gait cycle! 
+% S.misc.gaitmotion_type = 'FullGaitCycle';
+if S.subject.TrackKin
+    q_opt_des = q_opt_unsc.rad(:,desir_joint_idx(desir_joint_idx > 0));         % only interested in data to track 
+    track_err = q_opt_des-Qrefsync;                                             % compute tracking error
+    TrackKin_cost = sum(f_casadi.J_kin(track_err',W.kinematicsTracking))*h_opt;
+    J_opt = J_opt + 1/dist_trav_opt*TrackKin_cost;                              % compute tracking cost
+end
+
+% Add tracking terms in the cost function if grf tracking is enabled
+% Warning: made for tracking entire gait cycle! 
+% S.misc.gaitmotion_type = 'FullGaitCycle';
+if S.subject.TrackGRF
+    GRFk_pred = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total(GRFIdxs)...
+        model_info.ExtFunIO.GRFs.left_total(GRFIdxs)]);
+    GRFerr = GRFk_pred - GRFrefsync;                                            % tracking error 
+    
+    % Create stance mask
+    stanceMask = ones(Nmeshes, NGRF);
+    
+    if(S.subject.TrackGRFexcludeSwing)
+        stanceMask(:,1:NGRF/2) = repmat(swing_a * (swing_b + tanh(swing_alpha * (GRFrefsync(:,idxRz) - swing_Fmin))),1,NGRF/2);
+        stanceMask(:,NGRF/2+1:end) = repmat(swing_a * (swing_b + tanh(swing_alpha * (GRFrefsync(:,idxLz) - swing_Fmin))),1,NGRF/2);
+    end
+    
+    TrackGRF_cost = sum(f_casadi.J_grf(GRFerr',stanceMask',W.grfTracking))*h_opt;              
+    J_opt = J_opt + 1/dist_trav_opt*TrackGRF_cost;                              % contribution to cost function
+end
+
+% Track Joint Stiffness, added by Menthy
+if(S.subject.TrackJointStiffness)
+
+    % unscale kinematics
+    q_opt = q_opt_unsc.rad;                                                     % only interested in data to track 
+    qdot_opt = qdot_opt_unsc.rad;                                               % unscale velocities
+
+    KTopt = zeros(N, NMuscle); 
+    KMopt = zeros(N, NMuscle);
+    lTtildeopt = zeros(N, NMuscle);
+    lMtildeopt = zeros(N, NMuscle);
+    FTopt = zeros(N, NMuscle);
+    Fceopt = zeros(N, NMuscle);
+    Fpassopt = zeros(N, NMuscle);
+    lMTopt = zeros(N, NMuscle);
+    MAopt = zeros(N, NMuscle, nq.all);
+    for i = 1:N
+        % muscle-tendon length, velocity & moment arm
+        [lMToptk,vMToptk,MAoptk] = f_casadi.lMT_vMT_dM(q_opt(i,:),qdot_opt(i,:));                   
+        lMTopt(i,:) = full(lMToptk);
+        MAopt(i,:,:) = full(MAoptk);
+        
+        % muscle-fibre length
+        [~,lMtildeoptk] = f_casadi.FiberLength_TendonForce_tendon(FTtilde_opt_unsc(i,:),lMTopt(i,:));   
+        lMtildeopt(i,:) = full(lMtildeoptk);
+        
+         % get muscle fiber velocities
+        [vMoptk,~] = f_casadi.FiberVelocity_TendonForce_tendon(...                                     
+            FTtilde_opt_unsc(i,:),dFTtilde_opt_unsc(i,:),lMTopt(i,:),full(vMToptk));
+    
+        % Get muscle-tendon forces 
+        [~,FToptk,Fceoptk,Fpassoptk,~] = ...
+            f_casadi.forceEquilibrium_FtildeState_all_tendon(a_opt_unsc(i,:),...
+            FTtilde_opt_unsc(i,:),dFTtilde_opt_unsc(i,:),...
+            lMTopt(i,:),full(vMToptk),tensions);
+        FTopt(i,:) = full(FToptk);
+        Fceopt(i,:) = full(Fceoptk);
+        Fpassopt(i,:) = full(Fpassoptk);
+    
+        % Compute muscle/tendon stiffness
+        [KToptk, KMoptk, lTtildeoptk] = f_casadi.f_muscle_tendon_stiffness(a_opt_unsc(i,:),...
+            lMtildeopt(i,:),full(vMoptk),FTopt(i,:));
+        KTopt(i,:) = full(KToptk);
+        KMopt(i,:) = full(KMoptk);
+        lTtildeopt(i,:) = full(lTtildeoptk);
+    end
+
+    % Compute derivative of muscle moment arms
+    drdthetaopt = zeros(NMuscle,nq.all,N);
+    for i = 1:N
+        drdthetak = f_casadi.f_dr_dtheta(q_opt(i,:)');
+        drdthetaopt(:,:,i) = full(drdthetak);
+    end
+
+    % Compute joint stiffness
+    MAopt = permute(MAopt, [2 3 1]);
+    KJopt = zeros(nq.all,N);
+    for i = 1:N
+        KJk = f_casadi.f_joint_stiffness(KMopt(i,:)',KTopt(i,:)',FTopt(i,:)', ...
+        Fceopt(i,:)'+Fpassopt(i,:)',lMTopt(i,:)',lTtildeopt(i,:)',lMtildeopt(i,:)',...
+        MAopt(:,:,i),drdthetaopt(:,:,i));
+    
+        KJopt(:,i) = full(KJk);
+    end
+    
+    KJopt = circshift(KJopt,-1,2);
+
+    % Compute error
+    KJ_des = KJopt(desir_joint_idx(desir_joint_idx > 0),:);                                     % only interested in data to track
+    
+    % if(isfield(S.subject,"AllowedJointStiffnessDeviation"))
+    %     delta = S.subject.AllowedJointStiffnessDeviation;
+    %     wdev = f_casadi.f_smooth_window(KJ_des, KJrefsync' * (1 - delta), KJrefsync' * (1 + delta), 1e-2);
+    % else
+    %     wdev = 1;
+    % end
+    % wtot = W.jointStiffnessTracking .* wdev';
+    
+    track_err = KJrefsync'-KJ_des;                                                              % compute the tracking error
+    TrackKJ_cost = sum(f_casadi.J_kin(track_err,W.jointStiffnessTracking)) * h_opt;             % compute tracking cost
+    J_opt = J_opt + 1/(dist_trav_opt) * TrackKJ_cost;
+end
+
+% Add bushing forces & moments to the cost function (added by Menthy)
+if(S.subject.PenalizeBushings)
+
+    BushingF_opt = Foutk_opt(:,bushing_idxs);
+
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+        BushingF_opt = BushingF_opt(1:N,:);                                     % Foutk_opt for full gait cycle, but only 1/2 simulated during optimization
+    end
+
+    Bushing_cost = W.bushings * sum(f_casadi.J_bushings(BushingF_opt')) * h_opt;
+    J_opt = J_opt + 1/(dist_trav_opt) * Bushing_cost;
+end
+
+% Add Centre of Mass acceleration penalty (added by Menthy)
+if(S.subject.PenalizeCOMacc)
+
+    GRFk_pred_r = Foutk_opt(:,model_info.ExtFunIO.GRFs.right_total(1));
+    GRFk_pred_l = Foutk_opt(:,model_info.ExtFunIO.GRFs.left_total(1));
+    GRFk_pred_tot = GRFk_pred_r + GRFk_pred_l;
+    
+    if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+        GRFk_pred_tot = GRFk_pred_tot(1:N,:);                                   % Foutk_opt for full gait cycle, but only 1/2 simulated during optimization
+    end
+
+    % compute centre of mass acceleration
+    COMacc_cost = W.COMacc * sum((GRFk_pred_tot/model_info.mass).^2) * h_opt;
+        
+    % add bushing forces & moments to the cost function
+    J_opt = J_opt + 1/(dist_trav_opt) * COMacc_cost;
+end
+
+J_optf = full(J_opt);
+E_costf = full(E_cost);
+A_costf = full(A_cost);
+Arm_costf = full(Actu_cost);
+Qdotdot_costf = full(Qdotdot_cost);
+Pass_costf = full(Pass_cost);
+vA_costf = full(vA_cost);
+dFTtilde_costf = full(dFTtilde_cost);
+QdotdotArm_costf = full(QdotdotArm_cost);
+Syn_costf = full(Syn_cost);
+TrackSyn_costf = full(TrackSyn_cost);
+TrackKin_costf = full(TrackKin_cost);                                       % kinematics tracking cost (added by Menthy)
+TrackGRF_costf = full(TrackGRF_cost);                                       % grf tracking cost (added by Menthy)
+BushingPenalty_costf = full(Bushing_cost);                                  % bushing penalty cost (added by Menthy)
+Wmuscle_costf = full(Wmuscle_cost);                                         % negative muscle work penalty (added by Menthy)
+COMacc_costf = full(COMacc_cost);                                           % COM anterior-posterior acceleration penalty (added by Menthy)
+TrackKJ_costf = full(TrackKJ_cost);                                         % Joint stiffness tracking cost (added by Menthy)
+
+contributionCost.absoluteValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf,TrackKin_costf,...          % added kinematics tracking cost v
+    TrackGRF_costf, ...                                                     % added grf tracking cost (added by Menthy)
+    BushingPenalty_costf, ...                                               % added bushing penalty cost (added by Menthy)
+    Wmuscle_costf,...                                                       % added negative muscle work penalty (added by Menthy)
+    COMacc_costf,...                                                        % COM anterior-posterior acceleration penalty (added by Menthy)
+    TrackKJ_costf];                                                         % added joint stiffness tracking cost (added by Menthy)
+contributionCost.relativeValues = 1/(dist_trav_opt)*[E_costf,A_costf,...
+    Arm_costf,Qdotdot_costf,Pass_costf,vA_costf,dFTtilde_costf,...
+    QdotdotArm_costf,Syn_costf,N*TrackSyn_costf,...
+    TrackKin_costf, ...                                                     % added kinematics tracking cost (added by Menthy)
+    TrackGRF_costf, ...                                                     % added grf tracking cost (added by Menthy)
+    BushingPenalty_costf, ...                                               % added bushing penalty cost (added by Menthy) 
+    Wmuscle_costf,...                                                       % added negative muscle work penalty (added by Menthy)
+    COMacc_costf,...                                                        % COM anterior-posterior acceleration penalty (added by Menthy)
+    TrackKJ_costf]./J_optf*100;                                             % added joint stiffness tracking cost (added by Menthy)
+contributionCost.relativeValuesRound2 = ...
+    round(contributionCost.relativeValues,2);
+contributionCost.labels = {'metabolic energy','muscle activation',...
+    'actuator excitation','joint accelerations','limit torques','dadt','dFdt',...
+    'arm accelerations','synergy constraints','synergy weights tracking'...
+    'kinematics data tracking', ...                                         % added kinematics tracking
+    'grf data tracking', ...                                                % added grf tracking cost  
+    'bushing penalty', ...                                                  % added bushing penalty cost (added by Menthy)
+    'negative muscle power penalty',...                                     % added negative muscle work penalty (added by Menthy)
+    'COM anterior-posterior acceleration penalty',...                       % COM anterior-posterior acceleration penalty (added by Menthy)
+    'Joint stiffness tracking'};                                            % added joint stiffness tracking cost (added by Menthy)
+    
+% assertCost should be 0
+assertCost = abs(J_optf - 1/(dist_trav_opt)*(E_costf+A_costf + Arm_costf + ...
+    Qdotdot_costf + Pass_costf + vA_costf + dFTtilde_costf + ...
+    QdotdotArm_costf + Syn_costf + N*TrackSyn_costf + TrackKin_costf + ...  % added kinematics tracking
+    TrackGRF_costf + ...                                                    % added grf tracking cost 
+    BushingPenalty_costf + ...                                              % added bushing penalty cost (added by Menthy)  
+    Wmuscle_costf + ...                                                     % added negative muscle work penalty (added by Menthy)
+    COMacc_costf + ...                                                      % COM anterior-posterior acceleration penalty (added by Menthy)
+    TrackKJ_costf));                                                        % added joint stiffness tracking cost (added by Menthy)
+    
+if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+    cost_factor = 2;                                                        % times 2 since moved full gait reconstruction above this test
+else
+    cost_factor = 1;
+end
+
+assertCost2 = abs(stats.iterations.obj(end) - cost_factor*J_optf);                    
+
+if assertCost > 1*10^(-S.solver.tol_ipopt)
+    disp('Issue when reconstructing optimal cost wrt sum of terms')
+    disp(['   Difference = ' num2str(assertCost)])
+end
+if assertCost2 > 1*10^(-S.solver.tol_ipopt)
+    disp('Issue when reconstructing optimal cost wrt stats')
+    disp(['   Difference = ' num2str(assertCost2)])
+end
+
+% % Test collocation function
+% [coll_eq_constr_opt,coll_ineq_constr1_opt,coll_ineq_constr2_opt,coll_ineq_constr3_opt,...
+%     coll_ineq_constr4_opt,coll_ineq_constr5_opt,coll_ineq_constr6_opt,Jall_opt] = f_coll_map(tf_opt,...
+%     a_opt(1:end-1,:)', a_col_opt', FTtilde_opt(1:end-1,:)', FTtilde_col_opt', Qs_opt(1:end-1,:)', ...
+%     Qs_col_opt', Qdots_opt(1:end-1,:)', Qdots_col_opt', a_a_opt(1:end-1,:)', a_a_col_opt', ...
+%     vA_opt', e_a_opt', dFTtilde_col_opt', qdotdot_col_opt');
+% 
+% Jall_sc_opt = full(sum(Jall_opt)/dist_trav_opt);
+% assertCost3 = abs(stats.iterations.obj(end) - Jall_sc_opt);
+% 
+% if assertCost3 > 1*10^(-S.solver.tol_ipopt)
+%     disp('Issue when reconstructing optimal cost wrt stats')
+%     disp(['   Difference = ' num2str(assertCost3)])
+% end
+
+% %% Reconstruct full gait cycle
+
+% % joint accelerations controls on mesh points (2:N)
+% qddot_opt_unsc.deg = qdotdot_col_opt_unsc.deg(d:d:end,:);
+% qddot_opt_unsc.rad = qdotdot_col_opt_unsc.rad(d:d:end,:);
+
+% if strcmp(S.misc.gaitmotion_type,'HalfGaitCycle')
+%     % Use symmetry to reconstruct 2nd half of the gait cycle
+
+%     idx_2nd_half_GC = N+1:2*N;
+
+%     % Qs
+%     q_opt_unsc.deg = [q_opt_unsc.deg(1:end,:); q_opt_unsc.deg(1:end,:)];
+%     q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsInvA) = q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsInvB);
+%     q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+%     q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.jointi.base_forward) = q_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.jointi.base_forward) + dist_trav_opt;
+
+%     q_opt_unsc.rad = q_opt_unsc.deg;
+%     q_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = q_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+
+%     dist_trav_opt = dist_trav_opt*2;
+
+%     % Qdots
+%     qdot_opt_unsc.deg = [qdot_opt_unsc.deg(1:end,:); qdot_opt_unsc.deg(1:end,:)];
+%     qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvA) = qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvB);
+%     qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -qdot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+
+%     qdot_opt_unsc.rad = qdot_opt_unsc.deg;
+%     qdot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qdot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+
+%     % Qdotdots
+%     qddot_opt_unsc.deg = [qddot_opt_unsc.deg; qddot_opt_unsc.deg(1:end,:)];
+%     qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvA) = qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QdotsInvB);
+%     qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp) = -qddot_opt_unsc.deg(idx_2nd_half_GC,model_info.ExtFunIO.symQs.QsOpp);
+
+%     qddot_opt_unsc.rad = qddot_opt_unsc.deg;
+%     qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations) = qddot_opt_unsc.rad(:,model_info.ExtFunIO.jointi.rotations).*pi/180;
+
+%     % Muscle activations
+%     a_opt_unsc = [a_opt_unsc(1:end,:); a_opt_unsc(1:end,:)];
+%     a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
+
+%     % Time derivatives of muscle activations
+%     vA_opt_unsc = [vA_opt_unsc(1:end,:); vA_opt_unsc(1:end,:)];
+%     vA_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = vA_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
+
+%     % Muscle-tendon forces
+%     FTtilde_opt_unsc = [FTtilde_opt_unsc(1:end,:); FTtilde_opt_unsc(1:end,:)];
+%     FTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = FTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
+
+%     % Time derivative of muscle-tendon force
+%     dFTtilde_opt_unsc = [dFTtilde_opt_unsc; dFTtilde_opt_unsc(1:end,:)];
+%     dFTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvA) = dFTtilde_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.MusInvB);
+
+%     if nq.torqAct > 0
+%         % Torque actuator activations
+%         a_a_opt_unsc = [a_a_opt_unsc(1:end,:); a_a_opt_unsc(1:end,:)];
+%         a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvA) = a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvB);
+%         a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -a_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
+
+%         % Torque actuator excitations
+%         e_a_opt_unsc = [e_a_opt_unsc(1:end,:); e_a_opt_unsc(1:end,:)];
+%         e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvA) = e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActInvB);
+%         e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp) = -e_a_opt_unsc(idx_2nd_half_GC,model_info.ExtFunIO.symQs.ActOpp);
+
+%     end
+    
+%     % Synergy activations
+%     if (S.subject.synergies)
+%         SynH_r_opt_unsc_half = SynH_r_opt_unsc;
+%         SynH_l_opt_unsc_half = SynH_l_opt_unsc;
+%         SynH_r_opt_unsc = [SynH_r_opt_unsc_half; SynH_l_opt_unsc_half]; % mesh points
+%         SynH_l_opt_unsc = [SynH_l_opt_unsc_half; SynH_r_opt_unsc_half];
+%     end
+
+% end
+
+% % express slack controls on mesh points 1:N to be consistent
+% qddot_opt_unsc.deg = [qddot_opt_unsc.deg(end,:); qddot_opt_unsc.deg(1:end-1,:)];
+% qddot_opt_unsc.rad = [qddot_opt_unsc.rad(end,:); qddot_opt_unsc.rad(1:end-1,:)];
+% dFTtilde_opt_unsc = [dFTtilde_opt_unsc(end,:); dFTtilde_opt_unsc(1:end-1,:)];
+
+%% Gait cycle starts at right side initial contact
+
+% % Ground reaction forces at mesh points (1:N-1)
+% Foutk_opt                   = zeros(size(q_opt_unsc.rad,1),F.nnz_out);
+% for i = 1:size(q_opt_unsc.rad,1)
+%     % Create zero input vector for external function
+%     F_ext_input = zeros(model_info.ExtFunIO.input.nInputs,1);
+%     % Assign Qs
+%     F_ext_input(model_info.ExtFunIO.input.Qs.all,1) = q_opt_unsc.rad(i,:);
+%     % Assign Qdots
+%     F_ext_input(model_info.ExtFunIO.input.Qdots.all,1) = qdot_opt_unsc.rad(i,:);
+%     % Assign Qdotdots (A)
+%     F_ext_input(model_info.ExtFunIO.input.Qdotdots.all,1) = qddot_opt_unsc.rad(i,:);
+
+%     % Evaluate external function
+%     res = F(F_ext_input);
+%     Foutk_opt(i,:) = full(res);
+% end
+% GRFk_opt = Foutk_opt(:,[model_info.ExtFunIO.GRFs.right_total model_info.ExtFunIO.GRFs.left_total]);
+
+%% Gait cycle starts at right side initial contact
 [idx_GC,idx_GC_base_forward_offset,HS1,HS_threshold] = getStancePhaseSimulation(GRFk_opt,model_info.mass/3);
 
 Qs_GC = q_opt_unsc.deg(idx_GC,:);

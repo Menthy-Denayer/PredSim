@@ -12,13 +12,19 @@
 
 S.subject.name = 'DHondt_et_al_2024_3seg';
 
-S.misc.forward_velocity = 1.33;
+S.subject.mass = 62;
 
-S.solver.N_meshes = 100;
+% S.misc.forward_velocity = 1.33;
+S.misc.forward_velocity = 1.25;
+% S.misc.forward_velocity = 1.1;
 
-S.solver.IG_selection = 'quasi-random';
-S.subject.IG_pelvis_y = 0.9385;
-S.subject.adapt_IG_pelvis_y = 0;
+S.bounds.activation_all_muscles.lower = 0.01;
+
+% S.solver.N_meshes = 100;
+
+% S.solver.IG_selection = 'quasi-random';
+% S.subject.IG_pelvis_y = 0.9385;
+% S.subject.adapt_IG_pelvis_y = 0;
 
 S.metabolicE.tanh_b = 100;
 
@@ -65,7 +71,36 @@ S.bounds.distanceConstraints(5).direction = 'xz';
 S.bounds.distanceConstraints(5).lower_bound = 0.1;
 S.bounds.distanceConstraints(5).upper_bound = 2;
 
+%% Add knee exoskeleton
+% select orthosis function
+exo1.function_name = 'kneeExoBryan2020';
 
+% set parameters of assistance profile
+exo1.stiffness_onset = 0.03;                                                    % [%]
+exo1.stiffness_offset = 0.25;                                                   % [%]
+exo1.stiffness = 0.0198;                                                        % [Nm/kg/deg]
+exo1.peak_time = 0.55;                                                          % [%]
+exo1.rise_time = 0.25;                                                          % [%]
+exo1.fall_time = 0.08;                                                          % [%]
+exo1.peak_torque = 0.196;                                                       % [Nm/kg]
+exo1.damping_onset = 0.75;                                                      % [%]
+exo1.damping_offset = 0.95;                                                     % [%]
+exo1.damping = 2;                                                             % [Nm/rad/s]
+
+% general exo settings
+exo1.upper_body = 'femur';
+exo1.lower_body = 'tibia';
+exo1.joint_name = 'knee_angle_';
+exo1.isFullGaitCycle = true;
+exo1.bodymass = 62;
+
+% add orthosis on right side
+exo1.left_right = 'r';
+S.orthosis.settings{1} = exo1;
+
+% add the same orthosis on left side
+exo1.left_right = 'l';
+S.orthosis.settings{2} = exo1;
 
 
 

@@ -31,6 +31,8 @@ K_Eff = K_M .* cos_alpha.^2 + FM./lM .* (1-cos_alpha.^2);
 K_MTU = 1./(1./K_T + 1./K_Eff);
 
 %% Compute Stiffness Muscle-Joint
+% Here use FT estimated already and K MTU from previous step
+
 % K_M_J = K_MTU * rij² + drij/dtheta * F_T
 K_MTU_3D = repmat(K_MTU, [1 Njoints]);
 FT_3D    = repmat(FT,    [1 Njoints]);

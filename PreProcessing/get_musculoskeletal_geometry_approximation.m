@@ -22,8 +22,8 @@ function [model_info] = get_musculoskeletal_geometry_approximation(S,osim_path,m
 % Original author: Lars D'Hondt
 % Original date: 18/March/2022
 %
-% Last edit by: 
-% Last edit date: 
+% Last edit by: Menthy Denayer
+% Last edit date: 06/June/2026
 % --------------------------------------------------------------------------
 
 %% muscle
@@ -58,6 +58,8 @@ if strcmp(S.misc.msk_geom_eq,'polynomials')
         
     else
         disp(['   using existing musculoskeletal geometry ' S.misc.msk_geom_name])
+        load((fullfile(S.misc.subject_path,[S.misc.msk_geom_name,'_info.mat'])),'msk_geom_fit_info');   % added by Menthy to compute joint stiffness
+        model_info.muscle_info.polyFit.MuscleInfo = msk_geom_fit_info.fit;
     end
 
 else

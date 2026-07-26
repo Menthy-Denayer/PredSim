@@ -17,6 +17,11 @@ function [varargout] = runPredSim(S, osim_path)
 % 
 % Original author: Lars D'Hondt
 % Original date: 14/August/2024
+%
+% Last edit by: Menthy Denayer
+% Last edit date: 28/11/2025 
+% Added lines to cope with more than 1 requested output, if #vargout = 3,
+% then the savename, results structure and model info are returned
 % --------------------------------------------------------------------------
 
 
@@ -40,11 +45,15 @@ if S.solver.run_as_batch_job
     [savename] = add_pred_sim_to_batch(S,osim_path);
 else
     % run
-    [savename] = run_pred_sim(S,osim_path);
+    [savename, R, model_info] = run_pred_sim(S,osim_path);
 end
 
 if nargout == 1
     varargout{1} = savename;
+elseif nargout == 3
+    varargout{1} = savename;
+    varargout{2} = R;
+    varargout{3} = model_info;
 end
 
 end

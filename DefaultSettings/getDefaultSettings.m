@@ -18,6 +18,16 @@ function [S] = getDefaultSettings(S,osim_path)
 % 
 % Original author: Bram Van Den Bosch
 % Original date: 30/11/2021
+%
+% Last edit by: Menthy Denayer
+% Last edit date: 11/04/2026
+% - Added check if "S.misc.main_path" already exists, to have more control over 
+% where additional storage files are generated.
+% - Added default values for kinematics & GRF tracking (false)
+% - Added default value for bushing penalty (false)
+% - Added default value for negative muscle power penalty (false)
+% - Added default value for COM acceleration
+% - Added default values for joint stiffness tracking (false)
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -147,7 +157,10 @@ if ~isfield(S,'misc')
 end
 
 % subject folder to save intermediate data
-S.misc.subject_path = fullfile(S.misc.main_path,'Subjects',S.subject.name);
+if(~isfield(S.misc,'subject_path'))
+    S.misc.subject_path = fullfile(S.misc.main_path,'Subjects',S.subject.name);
+end
+
 
 % average velocity you want the model to have, in meters per second
 if ~isfield(S.misc,'forward_velocity')
@@ -499,6 +512,36 @@ if ~isfield(S.subject,'base_joints_arms')
     S.subject.base_joints_arms = 'acromial';
 end
 
+% If kinematics tracking is included in the simulation
+if ~isfield(S.subject,'TrackKin')
+    S.subject.TrackKin = false;
+end
+
+% If GRF tracking is included in the simulation
+if ~isfield(S.subject,'TrackGRF')
+    S.subject.TrackGRF = false;
+end
+
+% If bushing penalty is included in the simulation (added by Menthy)
+if ~isfield(S.subject,'PenalizeBushings')
+    S.subject.PenalizeBushings = false;
+end
+
+% If negative muscle work penalty is included in the simulation (added by Menthy)
+if ~isfield(S.subject,'PenalizeNegMuscleWork')
+    S.subject.PenalizeNegMuscleWork = false;
+end
+
+% If COM penalty is included in the simulation (added by Menthy)
+if ~isfield(S.subject,'PenalizeCOMacc')
+    S.subject.PenalizeCOMacc = false;
+end
+
+% If joint stiffness tracking is included in the simulation
+if ~isfield(S.subject,'TrackJointStiffness')
+    S.subject.TrackJointStiffness = false;
+end
+
 % If synergies are implemented in the simulation
 if ~isfield(S.subject,'synergies')
     S.subject.synergies = 0;
@@ -636,6 +679,20 @@ if ~isfield(S.weights,'slack_ctrl')
     S.weights.slack_ctrl = 0.001; 
 end
 
+% weight on bushing penalty (added by Menthy)
+if ~isfield(S.weights,'bushings')
+    S.weights.bushings = 0.25; 
+end
+
+% weight on negative muscle work penalty (added by Menthy)
+if ~isfield(S.weights,'NegMuscleWork')
+    S.weights.NegMuscleWork = 1; 
+end
+
+% weight on COM acceleration penalty (added by Menthy)
+if ~isfield(S.weights,'COMacc')
+    S.weights.COMacc = 1; 
+end
 
 %% OpenSimADOptions
 
@@ -650,8 +707,13 @@ end
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
 %   Visual studio 2017: 'Visual Studio 16 2019'
 %   Visual studio 2017: 'Visual Studio 17 2022'
+%   Unix Makefiles: on Linux and similar systems
 if ~isfield(S.OpenSimADOptions,'compiler')
-    S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+    if ispc
+        S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+    elseif isunix
+        S.OpenSimADOptions.compiler = 'Unix Makefiles'
+    end
 end
 
 % Input forces acting on bodies
