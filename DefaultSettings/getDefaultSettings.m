@@ -18,6 +18,25 @@ function [S] = getDefaultSettings(S,osim_path)
 % 
 % Original author: Bram Van Den Bosch
 % Original date: 30/11/2021
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 %% bounds
@@ -204,6 +223,11 @@ if ~isfield(S.misc,'msk_geom_n_samples')
     S.misc.msk_geom_n_samples = 5000;
 end
 
+% always perform a new fit of msk geometry
+if ~isfield(S.misc,'msk_geom_always_new_fit')
+    S.misc.msk_geom_always_new_fit = false;
+end
+
 % rmse threshold for muscle-tendon length approximation
 if ~isfield(S.misc,'threshold_lMT_fit')
     S.misc.threshold_lMT_fit = 0.003;
@@ -212,6 +236,12 @@ end
 % rmse threshold for muscle-tendon momentarm approximation
 if ~isfield(S.misc,'threshold_dM_fit')
     S.misc.threshold_dM_fit = 0.003;
+end
+
+% reduce the number of coefficients in the fit, based on statistical
+% significance
+if ~isfield(S.misc,'reduce_coeff_fit')
+    S.misc.reduce_coeff_fit = true;
 end
 
 % visualize IG and bounds
@@ -489,6 +519,11 @@ if ~isfield(S.subject,'set_stiffness_selected_ligaments')
         {'PlantarFascia','plantarFasciaNatali2010'};
 end
 
+% default values for specific tension
+if ~isfield(S.subject,'default_specific_tension')
+    S.subject.default_specific_tension = 'default_specific_tensions.csv';
+end
+
 % joints that are considered base of a leg
 if ~isfield(S.subject,'base_joints_legs')
     S.subject.base_joints_legs = 'hip';
@@ -650,8 +685,13 @@ end
 %   Visual studio 2017: 'Visual Studio 15 2017 Win64'
 %   Visual studio 2017: 'Visual Studio 16 2019'
 %   Visual studio 2017: 'Visual Studio 17 2022'
+%   Unix Makefiles: on Linux and similar systems
 if ~isfield(S.OpenSimADOptions,'compiler')
-    S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+    if ispc
+        S.OpenSimADOptions.compiler = findVisualStudioInstallation;
+    elseif isunix
+        S.OpenSimADOptions.compiler = 'Unix Makefiles';
+    end
 end
 
 % Input forces acting on bodies
@@ -669,9 +709,28 @@ if ~isfield(S.OpenSimADOptions,'export3DPositions')
     S.OpenSimADOptions.export3DPositions = [];
 end
 
+% Export orientation of body
+if ~isfield(S.OpenSimADOptions,'export3DOrientations')
+    S.OpenSimADOptions.export3DOrientations = [];
+end
+if ~ispc && ~isempty(S.OpenSimADOptions.export3DOrientations)
+    S.OpenSimADOptions.export3DOrientations = [];
+    warning("Setting 'S.OpenSimADOptions.export3DOrientations' is " + ...
+        "only supported on windows, so will not be used.")
+end
+
 % Export velocities of points w.r.t. ground frame
 if ~isfield(S.OpenSimADOptions,'export3DVelocities')
     S.OpenSimADOptions.export3DVelocities = [];
+end
+
+if ~isfield(S.OpenSimADOptions,'export3DVelocitiesProjGround')
+    S.OpenSimADOptions.export3DVelocitiesProjGround = [];
+end
+if ~ispc && ~isempty(S.OpenSimADOptions.export3DVelocitiesProjGround)
+    S.OpenSimADOptions.export3DVelocitiesProjGround = [];
+    warning("Setting 'S.OpenSimADOptions.export3DVelocitiesProjGround' is " + ...
+        "only supported on windows, so will not be used.")
 end
 
 % If you want to choose the order of the joints and coordinate outputs
@@ -712,5 +771,17 @@ if ~isfield(S.OpenSimADOptions,'verify_ID')
     S.OpenSimADOptions.verify_ID = false;
 end 
 
-
+if ~isfield(S.OpenSimADOptions,'useSerialisedFunction')
+    S.OpenSimADOptions.useSerialisedFunction = false;
 end
+if ~ispc && S.OpenSimADOptions.useSerialisedFunction
+    S.OpenSimADOptions.useSerialisedFunction = false;
+    warning("Setting 'S.OpenSimADOptions.useSerialisedFunction' is " + ...
+        "only supported on windows, so will not be used.")
+end
+
+if ~isfield(S.OpenSimADOptions,'always_generate')
+    S.OpenSimADOptions.always_generate = false;
+end
+
+end % end of function

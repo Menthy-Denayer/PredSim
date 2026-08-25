@@ -20,11 +20,24 @@ function [model_info] = get_model_info(S,osim_path)
 % Original author: Lars D'Hondt
 % Original date: 11/April/2022
 %
-% update:
-%   read out ligament names
-%
-% Last edit by: Lars D'Hondt
-% Last edit date: 5/April/2023
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 
@@ -85,19 +98,23 @@ end
 model_info.ligament_info.ligament_names = ligament_names;
 model_info.ligament_info.NLigament = length(ligament_names);
 
-%% OpenSim API
-% indices of coordinates in the OpenSim API state vector
-model_info = getCoordinateIndexForStateVectorOpenSimAPI(S,osim_path,model_info);
-
 %% Symmetry
 [symQs, model_info.ExtFunIO.jointi] = identify_kinematic_chains(S,osim_path,model_info);
 
 orderMus = 1:length(model_info.muscle_info.muscle_names);
-orderMusInv = zeros(1,length(model_info.muscle_info.muscle_names));
+orderMusInv = orderMus;
 for i=1:length(model_info.muscle_info.muscle_names)
 
-    orderMusInv(i) = find(strcmp(model_info.muscle_info.muscle_names,...
+    idx_mus_inv_i = find(strcmp(model_info.muscle_info.muscle_names,...
         mirrorName(model_info.muscle_info.muscle_names{i})));
+    if ~isempty(idx_mus_inv_i)
+        orderMusInv(i) = idx_mus_inv_i;
+    else
+        if strcmpi(S.misc.gaitmotion_type,'HalfGaitCycle')
+            error("Model asymmetry detected while S.misc.gaitmotion_type = " + ...
+                "'HalfGaitCycle'")
+        end
+    end
 end
 symQs.MusInvA = orderMus;
 symQs.MusInvB = orderMusInv;

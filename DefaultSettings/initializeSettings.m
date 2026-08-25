@@ -14,6 +14,25 @@ function [S] = initializeSettings(varargin)
 %
 % Original author: Bram Van Den Bosch
 % Original date: 01/12/2021
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 % get path to repo
@@ -51,7 +70,11 @@ S.orthosis.settings = {};
 S.subject.adapt_IG_pelvis_y = 0;
 
 % save computername
-S.misc.computername = getenv('COMPUTERNAME');
+if ispc
+    S.misc.computername = getenv('COMPUTERNAME');
+elseif isunix
+    S.misc.computername = getenv('HOSTNAME');
+end
 
 % save path to repo
 S.misc.main_path = pathRepo;

@@ -16,11 +16,27 @@ function [] = OCP_formulation(S,model_info,f_casadi)
 % OUTPUT:
 %   - This function returns no outputs -
 % 
-% Original author: Dhruv Gupta and Lars D'Hondt
+% Original author: Dhruv Gupta, Lars D'Hondt, and Bram Van Den Bosch
 % Original date: January-May/2022
 %
-% Last edit by: Bram Van Den Bosch
-% Last edit date: 23/Sept/2024
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 disp('Start formulating OCP...')
@@ -44,9 +60,12 @@ pathmain = pwd;
 % addpath(genpath(pathRepo));
 % Loading external functions.
 setup.derivatives =  'AD'; % Algorithmic differentiation
-cd(S.misc.subject_path)
-F  = external('F',S.misc.external_function);
-cd(pathmain);
+
+if S.OpenSimADOptions.useSerialisedFunction
+    F = Function.load(fullfile(S.misc.subject_path, S.misc.external_function));
+else
+    F = external('F',fullfile(S.misc.subject_path, S.misc.external_function));
+end
 
 %% Collocation Scheme
 % We use a pseudospectral direct collocation method, i.e. we use Lagrange
@@ -570,8 +589,6 @@ end % End loop over collocation points
 if (S.subject.synergies) && (S.subject.TrackSynW)
     J_TrackSynW = W.TrackSynW*f_casadi.TrackSynW(SynW_rk, SynW_lk);
     J = J + J_TrackSynW;
-else
-    J_TrackSynW = 0;
 end
 
 % Synergies: a - WH = 0
@@ -1110,7 +1127,7 @@ for k=1:N
         E_cost = E_cost + W.E*B(j+1)*...
             (f_casadi.J_muscles_exp(e_tot_opt_all,W.E_exp))/model_info.mass*h_opt;
         A_cost = A_cost + W.a*B(j+1)*...
-            (f_casadi.J_muscles(a_col_opt(count,:)))*h_opt;      
+            (f_casadi.J_muscles_exp(a_col_opt(count,:), W.a_exp))*h_opt;      
         Qdotdot_cost = Qdotdot_cost + W.q_dotdot*B(j+1)*...
             (f_casadi.J_not_arms_dof(qdotdot_col_opt(count,model_info.ExtFunIO.jointi.noarmsi)))*h_opt;
         Pass_cost = Pass_cost + W.pass_torq*B(j+1)*...
