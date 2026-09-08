@@ -22,6 +22,25 @@ function [R] = PostProcess_joint_stiffness(model_info,f_casadi,R)
 %
 % Last edit by: 
 % Last edit date: 
+%
+% --------------------------------------------------------------------------
+% This file is part of PredSim.
+% 
+% PredSim: A Framework for Rapid Predictive Simulations of Locomotion
+% Copyright (c) 2026 KU Leuven
+% 
+% PredSim is free software: you can redistribute it and/or modify it under 
+% the terms of the GNU Affero General Public License as published by the 
+% Free Software Foundation, either version 3 of the License, or (at your 
+% option) any later version.
+% 
+% PredSim is distributed in the hope that it will be useful, but WITHOUT 
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public 
+% License for more details.
+% 
+% You should have received a copy of the GNU Affero General Public License 
+% along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
 %% Define Variables
@@ -42,18 +61,18 @@ rij = permute(R.muscles.dM, [2 3 1]);
 KT_full = full(KT);
 KM_full = full(KM);
 
-R.joint_stiffness.KT = KT_full;
-R.joint_stiffness.KM = KM_full;
+R.joint_stiffness.KT = KT_full';
+R.joint_stiffness.KM = KM_full';
 
 %% Compute Derivative of Moment Arm
 drdtheta = zeros(size(a,1),size(Q,1),size(Q,2));
 
-for j = 1:size(drdtheta,3)
-    [~,~,~,drdthetaj] =  f_casadi.lMT_vMT_dM(Q(:,j)',[]);
+for j = 1:size(drdtheta,3)                                                  % loop over all timepoints
+    [~,~,~,drdthetaj] =  f_casadi.lMT_vMT_dM(Q(:,j)',[]);                   % use lMT_vMT_dM function to compute muscle moment arm partial derivatives
     drdthetaj_full = full(drdthetaj);
-    for i = 1:size(a,1)
-        H_i = drdthetaj_full(i:size(a,1):end, :);                               % nqxnq Hessian for muscle i: H_i(j,k) = d(dM(i,j))/dtheta_k
-        dMdr_diag(i,:) = diag(H_i)';                                            % keep only j==k terms
+    for i = 1:size(a,1)                                                     % loop over all muscles
+        H_i = drdthetaj_full(i:size(a,1):end, :);                           % Nq x Nq Hessian for muscle i: H_i(j,k) = d(dM(i,j))/dtheta_k
+        dMdr_diag(i,:) = diag(H_i)';                                        % keep only j = k terms (second order derivatives)
     end
     drdtheta(:,:,j) = dMdr_diag;
 end
@@ -61,12 +80,12 @@ end
 R.joint_stiffness.drdtheta = drdtheta;
 
 %% Compute Joint Stiffness
-KJ = zeros(size(Q));
+KJ = zeros(size(Q))';
 R.joint_stiffness.KJ = KJ;
 
 for i = 1:size(KJ,2)
     KJj = f_casadi.f_joint_stiffness(KM_full(:,i),KT_full(:,i),FT(:,i),FM(:,i),lMT(:,i),...
         lTtilde(:,i),lMtilde(:,i),rij(:,:,i),drdtheta(:,:,i));
 
-    R.joint_stiffness.KJ(:,i) = full(KJj);
+    R.joint_stiffness.KJ(:,i) = full(KJj)';
 end
