@@ -50,10 +50,9 @@ N_joints = model_info.ExtFunIO.jointi.nq.all;
 a          = SX.sym('a',N_muscles);                                         % Muscle activations
 lMtilde_in = SX.sym('lMtilde_in',N_muscles);                                % Muscle fibre lengths
 vM         = SX.sym('vM',N_muscles);                                        % Muscle fibre velocities
-FT         = SX.sym('FT',N_muscles);                                        % Tendon force
+lT         = SX.sym('lT',N_muscles);                                        % Tendon length
 KM         = SX(N_muscles,1);                                               % Muscle stiffness
 KT         = SX(N_muscles,1);                                               % Tendon stiffness
-lTtilde    = SX(N_muscles,1);                                               % Tendon length
 
 % Parameters of force-length-velocity curves
 load('Ftparam.mat','Ftparam');
@@ -63,19 +62,18 @@ load('Faparam.mat','Faparam');
 
 % Function to get muscle & tendons stiffness
 for m = 1:N_muscles
-    [KT(m), KM(m), lTtilde(m)] = ForceEquilibrium_dFtildeState_all_tendon(a(m),lMtilde_in(m),vM(m),FT(m),...
+    [KT(m), KM(m)] = ForceEquilibrium_dFtildeState_all_tendon(a(m),lMtilde_in(m),vM(m),lT(m),...
         model_info.muscle_info.parameters(m).FMo,model_info.muscle_info.parameters(m).lMo,...
         model_info.muscle_info.parameters(m).lTs,model_info.muscle_info.parameters(m).vMmax,...
         Ftparam,Fvparam,Fpparam,Faparam,...
         model_info.muscle_info.parameters(m).muscle_pass_stiff_shift,...
         model_info.muscle_info.parameters(m).muscle_pass_stiff_scale,model_info.muscle_info.parameters(m).muscle_strength,...
-        model_info.muscle_info.parameters(m).tendon_stiff,...
-        model_info.muscle_info.parameters(m).tendon_stiff_shift);
+        model_info.muscle_info.parameters(m).tendon_stiff);
 end
 f_muscle_tendon_stiffness = ...
-    Function('f_muscle_tendon_stiffness',{a,lMtilde_in,vM,FT},{KT, KM, lTtilde},...
-    {'a','lMtilde','vM','FT'},...
-    {'KT','KM','lTtilde'});
+    Function('f_muscle_tendon_stiffness',{a,lMtilde_in,vM,lT},{KT, KM},...
+    {'a','lMtilde','vM','lT'},...
+    {'KT','KM'});
 
 
 %% Joint Stiffness
@@ -83,6 +81,7 @@ KM_in       = SX.sym('KM_in',N_muscles);                                    % Mu
 KT_in       = SX.sym('KT_in',N_muscles);                                    % Tendon stiffness
 drdtheta_in = SX.sym('drdtheta_in',N_muscles,N_joints);                     % Derivative of moment arm
 FM          = SX.sym('FM',N_muscles);                                       % Muscle force
+FT          = SX.sym('FT',N_muscles);                                       % Muscle force
 lMT         = SX.sym('lMT',N_muscles);                                      % Muscle-tendon length
 lTtilde_in  = SX.sym('lTtilde_in',N_muscles);                               % Tendon length normalized
 dM          = SX.sym('dM',N_muscles,N_joints);                              % Muscle moment arms

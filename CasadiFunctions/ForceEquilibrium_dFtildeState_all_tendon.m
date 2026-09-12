@@ -1,7 +1,7 @@
-function [dfse, dfM, lTtilde] = ...
-    ForceEquilibrium_dFtildeState_all_tendon(a,lMtilde,vM,fse,FMo_in,lMo_in,...
+function [dfse, dfM] = ...
+    ForceEquilibrium_dFtildeState_all_tendon(a,lMtilde,vM,lT,FMo_in,lMo_in,...
     lTs_in,vMmax_in,Ftparam,Fvparam,Fpparam,Faparam,stiffness_shift,...
-    stiffness_scale,strength,tendon_stiff,shift)
+    stiffness_scale,strength,tendon_stiff)
 % --------------------------------------------------------------------------
 % ForceEquilibrium_dFtildeState_all_tendon
 %    This function computes the partial derivative of the muscle and tendon
@@ -45,12 +45,9 @@ FMo = ones(size(a,1),1)*FMo_in;
 lMo = ones(size(a,1),1)*lMo_in;
 lTs = ones(size(a,1),1)*lTs_in;
 vMmax = ones(size(a,1),1)*vMmax_in;
-Atendonsc = tendon_stiff;
-Atendon = ones(size(a,1),1)*Atendonsc;
 
 % Inverse tendon force-length characteristic
-FTtilde = fse./FMo;
-lTtilde = log(5*(FTtilde + 0.25 - shift))./Atendon + 0.995;
+lTtilde = lT./lTs;
 
 % define muscle lengths
 vMtilde = vM./vMmax;

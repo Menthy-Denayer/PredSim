@@ -46,8 +46,8 @@ function [R] = PostProcess_joint_stiffness(model_info,f_casadi,R)
 %% Define Variables
 a = R.muscles.a';
 lMtilde = R.muscles.lMtilde';
-lTtilde = R.muscles.lT ./[model_info.muscle_info.parameters.lTs];
-lTtilde = lTtilde';
+lT = R.muscles.lT';
+lTtilde = lT./[model_info.muscle_info.parameters.lTs]';
 lMT = R.muscles.lMT';
 vM = R.muscles.vM';
 FT = R.muscles.FT';
@@ -56,7 +56,7 @@ Q = R.kinematics.Qs_rad';
 rij = permute(R.muscles.dM, [2 3 1]);
 
 %% Compute Muscle Stiffness
-[KT, KM, ~] = f_casadi.f_muscle_tendon_stiffness(a,lMtilde,vM,FT);
+[KT, KM] = f_casadi.f_muscle_tendon_stiffness(a,lMtilde,vM,lT);
 
 KT_full = full(KT);
 KM_full = full(KM);
@@ -77,15 +77,18 @@ for j = 1:size(drdtheta,3)                                                  % lo
     drdtheta(:,:,j) = dMdr_diag;
 end
 
-R.joint_stiffness.drdtheta = drdtheta;
+R.joint_stiffness.drdtheta = permute(drdtheta, [3 1 2]);
 
 %% Compute Joint Stiffness
-KJ = zeros(size(Q))';
-R.joint_stiffness.KJ = KJ;
+KMJ = zeros(size(Q,2), size(a,1), size(Q,1));                                
+KJ = zeros(size(Q))';                                                          
+R.joint_stiffness.KJ = KJ;                                                    
+R.joint_stiffness.KMJ = KMJ;
 
-for i = 1:size(KJ,2)
-    KJj = f_casadi.f_joint_stiffness(KM_full(:,i),KT_full(:,i),FT(:,i),FM(:,i),lMT(:,i),...
-        lTtilde(:,i),lMtilde(:,i),rij(:,:,i),drdtheta(:,:,i));
+for j = 1:size(KJ,1)
+    [KJj, KMJj] = f_casadi.f_joint_stiffness(KM_full(:,j),KT_full(:,j),FT(:,j),FM(:,j),lMT(:,j),...
+        lTtilde(:,j),lMtilde(:,j),rij(:,:,j),drdtheta(:,:,j));
 
-    R.joint_stiffness.KJ(:,i) = full(KJj)';
+    R.joint_stiffness.KJ(j,:) = full(KJj)';
+    R.joint_stiffness.KMJ(j,:,:) = full(KMJj);
 end
