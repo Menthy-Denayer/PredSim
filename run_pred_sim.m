@@ -39,6 +39,9 @@ function [varargout] = run_pred_sim(S,osim_path)
 % along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
+% Add OpenSim libraries, for parallel workers to find OpenSim
+javaclasspath(fullfile(getenv('EBROOTOPENSIM'),'sdk','Java','org-opensim-modeling.jar'));
+
 addpath(fullfile(S.misc.main_path, 'VariousFunctions'))
 addpath(fullfile(S.misc.main_path, 'WearableDevices'))
 
@@ -160,7 +163,7 @@ addpath(fullfile(S.misc.main_path, 'PostProcessing'))
 disp('Start PostProcessing...')
 disp(' ')
 t0 = tic;
-PostProcessing(S,model_info,f_casadi);
+R = PostProcessing(S,model_info,f_casadi);                                      % Added R to outputs
 disp(' ')
 disp(['...PostProcessing done. Time elapsed ' num2str(toc(t0),'%.2f') ' s'])
 disp(' ')
@@ -174,4 +177,10 @@ disp(' ')
 disp(' ')
 diary off
 
+% To accomodate personalization
+if nargout == 3
+    varargout{1} = S.misc.result_filename;
+    varargout{2} = R;
+    varargout{3} = model_info;
+end
 

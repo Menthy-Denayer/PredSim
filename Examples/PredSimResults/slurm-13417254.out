@@ -1,0 +1,883 @@
+Picked up JAVA_TOOL_OPTIONS: -Xmx4944245555
+Opening log file:  /user/brussel/112/vsc11236/java.log.9552
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2024 The MathWorks, Inc.
+             R2024a Update 6 (24.1.0.2689473) 64-bit (glnxa64)
+                               July 29, 2024
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+BLAS: trying environment BLAS_VERSION...
+BLAS: loading /apps/brussel/RL9/zen4/software/OpenBLAS/0.3.27-GCC-13.3.0/lib64/libopenblas.so
+BLAS: loaded /apps/brussel/RL9/zen4/software/OpenBLAS/0.3.27-GCC-13.3.0/lib64/libopenblas.so@0x1480758fb7f0
+
+blas_version =
+
+    'OpenBLAS 0.3.24'
+
+LAPACK: trying environment LAPACK_VERSION...
+LAPACK: loading /apps/brussel/RL9/zen4/software/OpenBLAS/0.3.27-GCC-13.3.0/lib64/libopenblas.so
+LAPACK: loaded /apps/brussel/RL9/zen4/software/OpenBLAS/0.3.27-GCC-13.3.0/lib64/libopenblas.so@0x1480758fb7f0
+
+lapack_version =
+
+    'Linear Algebra PACKage (LAPACK 3.12.0)'
+
+[Warning: Unable to get git hash. It is advised to get PredSim through GitHub to
+have version control and to receive future updates.] 
+[> In get_git_hash (line 58)
+In initializeSettings (line 67)
+In run_on_VSC_cluster (line 48)] 
+Initialising settings from "/vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/settings_SUBJ04opt3D.m".
+
+S = 
+
+  struct with fields:
+
+          metabolicE: []
+                misc: [1x1 struct]
+        post_process: []
+              solver: [1x1 struct]
+             subject: [1x1 struct]
+             weights: []
+            orthosis: [1x1 struct]
+    OpenSimADOptions: []
+              bounds: [1x1 struct]
+
+Using /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D_13359915_100Meshes_zeroMTP.mot as initial guess.
+ 
+Subject name: SUBJ04opt3D
+OpenSim model: /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+ 
+ 
+Start PreProcessing...
+ 
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+   Using existing external function: 
+      /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/F_SUBJ04opt3D.so
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+Default ratio of Slow twitch fibers for muscle abd_r selected (0.50)
+Default ratio of Slow twitch fibers for muscle add_r selected (0.50)
+Default ratio of Slow twitch fibers for muscle abd_l selected (0.50)
+Default ratio of Slow twitch fibers for muscle add_l selected (0.50)
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+   using existing musculoskeletal geometry SUBJ04opt3D_f_lMT_vMT_dM_poly_3_9
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+ 
+...PreProcessing done. Time elapsed 8.46 s
+ 
+ 
+Start creating CasADi functions...
+ 
+ 
+...CasADi functions created. Time elapsed 2.44 s
+ 
+ 
+Start formulating OCP...
+[info] Loaded model SUBJ04opt3D from file /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSim/Subjects/SUBJ04opt3D/SUBJ04opt3D.osim
+[warning] Couldn't find file 'sacrum.vtp'.
+[warning] Couldn't find file 'pelvis.vtp'.
+[warning] Couldn't find file 'l_pelvis.vtp'.
+[warning] Couldn't find file 'femur_r.vtp'.
+[warning] Couldn't find file 'tibia_r.vtp'.
+[warning] Couldn't find file 'fibula_r.vtp'.
+[warning] Couldn't find file 'talus_rv.vtp'.
+[warning] Couldn't find file 'foot.vtp'.
+[warning] Couldn't find file 'bofoot.vtp'.
+[warning] Couldn't find file 'femur_l.vtp'.
+[warning] Couldn't find file 'tibia_l.vtp'.
+[warning] Couldn't find file 'fibula_l.vtp'.
+[warning] Couldn't find file 'talus_lv.vtp'.
+[warning] Couldn't find file 'l_foot.vtp'.
+[warning] Couldn't find file 'l_bofoot.vtp'.
+[warning] Couldn't find file 'hat_spine.vtp'.
+[warning] Couldn't find file 'hat_jaw.vtp'.
+[warning] Couldn't find file 'hat_skull.vtp'.
+[warning] Couldn't find file 'hat_ribs_scap.vtp'.
+ 
+...OCP formulation done. Time elapsed 2.86 s
+ 
+Starting NLP solver...
+ 
+
+******************************************************************************
+This program contains Ipopt, a library for large-scale nonlinear optimization.
+ Ipopt is released as open source code under the Eclipse Public License (EPL).
+         For more information visit https://github.com/coin-or/Ipopt
+******************************************************************************
+
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.7.2.
+
+Number of nonzeros in equality constraint Jacobian...:   567892
+Number of nonzeros in inequality constraint Jacobian.:    46500
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Total number of variables............................:    56798
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:    56798
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:    53998
+Total number of inequality constraints...............:    17700
+        inequality constraints with only lower bounds:     8400
+   inequality constraints with lower and upper bounds:      900
+        inequality constraints with only upper bounds:     8400
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  1.1106294e+03 1.09e+03 1.00e+02   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1  1.3218790e+03 8.01e+03 1.10e+04  -0.5 1.20e+01    -  2.29e-01 2.70e-01f  1
+   2  1.9508999e+03 7.49e+03 4.63e+04   0.5 7.81e+01    -  5.46e-02 6.12e-02f  1
+   3  2.0607292e+03 7.42e+03 4.83e+04   0.5 1.44e+02    -  3.09e-02 9.99e-03f  1
+   4  2.2563549e+03 7.29e+03 5.11e+04   0.5 1.76e+02    -  5.93e-02 1.69e-02f  1
+   5  2.6778433e+03 7.04e+03 5.47e+04   0.5 1.61e+02    -  6.56e-02 3.43e-02f  1
+   6  3.3893722e+03 6.68e+03 7.26e+04   0.5 1.67e+02    -  7.26e-02 5.04e-02f  1
+   7  3.8252109e+03 6.49e+03 1.07e+05   0.5 1.58e+02    -  1.15e-01 2.85e-02f  1
+   8  4.5490038e+03 6.20e+03 1.71e+05   0.5 1.16e+02    -  2.36e-01 4.37e-02f  1
+   9  6.2398062e+03 5.62e+03 3.82e+05   0.5 9.83e+01    -  1.44e-01 8.83e-02f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  10  7.1894592e+03 5.36e+03 4.98e+05   0.5 1.34e+02    -  1.32e-01 4.58e-02f  1
+  11  9.4087695e+03 4.84e+03 9.42e+05   0.5 9.29e+01    -  1.15e-01 9.34e-02f  1
+  12  1.1073730e+04 4.51e+03 1.32e+06   0.5 8.29e+01    -  5.71e-02 6.83e-02f  1
+  13  1.2463489e+04 4.24e+03 1.67e+06   0.5 8.66e+01    -  4.13e-02 5.72e-02f  1
+  14  1.3777147e+04 4.01e+03 2.01e+06   0.5 9.09e+01    -  9.33e-02 5.39e-02f  1
+  15  1.4668951e+04 3.86e+03 2.22e+06   0.5 9.57e+01    -  2.06e-02 3.60e-02f  1
+  16  1.6201357e+04 3.62e+03 2.62e+06   0.5 8.67e+01    -  1.15e-01 6.22e-02f  1
+  17  1.6722889e+04 3.54e+03 2.76e+06   0.5 1.49e+02    -  2.51e-02 2.24e-02f  1
+  18  1.8354620e+04 3.29e+03 3.22e+06   0.5 1.69e+02    -  6.25e-02 6.78e-02f  1
+  19  1.8690622e+04 3.24e+03 3.30e+06   0.5 1.11e+02    -  8.37e-03 1.48e-02f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  20  1.9531010e+04 3.12e+03 3.49e+06   0.5 1.63e+02    -  6.72e-02 3.71e-02f  1
+  21  2.0224892e+04 3.02e+03 3.57e+06   0.5 1.41e+02    -  4.68e-02 3.10e-02f  1
+  22  2.1202583e+04 2.90e+03 3.57e+06   0.5 1.04e+02    -  6.69e-02 4.15e-02f  1
+  23  2.2214984e+04 2.77e+03 3.62e+06   0.5 9.10e+01    -  2.07e-02 4.35e-02f  1
+  24  2.3308529e+04 2.63e+03 4.07e+06   0.5 1.15e+02    -  2.83e-02 4.91e-02f  1
+  25  2.4368895e+04 2.50e+03 4.57e+06   0.5 1.35e+02    -  3.28e-02 5.11e-02f  1
+  26  2.5800498e+04 2.30e+03 5.33e+06   0.5 1.19e+02    -  6.67e-02 7.60e-02f  1
+  27  2.6787028e+04 2.15e+03 5.88e+06   0.5 1.06e+02    -  8.00e-02 6.56e-02f  1
+  28  2.7872572e+04 2.01e+03 6.48e+06   0.5 9.64e+01    -  6.63e-02 6.89e-02f  1
+  29  2.9134752e+04 1.82e+03 7.33e+06   0.5 1.19e+02    -  1.19e-01 9.23e-02f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  30  2.9713481e+04 1.72e+03 7.92e+06   0.5 1.74e+02    -  6.40e-02 5.93e-02f  1
+  31  2.9863947e+04 1.68e+03 8.18e+06   0.5 9.24e+01    -  1.93e-02 2.31e-02f  1
+  32  2.9947197e+04 1.65e+03 8.34e+06   0.5 8.55e+01    -  1.05e-01 1.78e-02f  1
+  33  3.0346930e+04 1.50e+03 7.91e+06   0.5 1.23e+02    -  2.96e-02 9.28e-02f  1
+  34  3.0469004e+04 1.48e+03 7.85e+06   0.5 1.77e+02    -  1.97e-02 1.25e-02f  1
+  35  3.0878359e+04 1.42e+03 7.62e+06   0.5 1.93e+02    -  6.38e-02 3.95e-02f  1
+  36  3.1291236e+04 1.36e+03 7.34e+06   0.5 2.09e+02    -  8.62e-02 4.58e-02f  1
+  37  3.1662685e+04 1.29e+03 7.01e+06   0.5 1.10e+02    -  1.55e-02 5.06e-02f  1
+  38  3.1747152e+04 1.27e+03 6.90e+06   0.5 9.36e+01    -  2.74e-02 1.80e-02f  1
+  39  3.1845820e+04 1.21e+03 6.64e+06   0.5 1.17e+02    -  2.95e-02 4.61e-02f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  40  3.1915445e+04 1.16e+03 6.41e+06   0.5 1.95e+02    -  2.27e-02 3.82e-02f  1
+  41  3.2286576e+04 1.07e+03 5.98e+06   0.5 1.81e+02    -  2.18e-02 7.76e-02f  1
+  42  3.2520634e+04 1.02e+03 5.70e+06   0.5 2.01e+02    -  1.02e-01 4.96e-02f  1
+  43  3.2962253e+04 9.58e+02 5.41e+06   0.5 1.56e+02    -  4.61e-02 5.49e-02f  1
+  44  3.3974202e+04 8.53e+02 4.84e+06   0.5 2.21e+02    -  1.37e-02 1.06e-01f  1
+  45  3.4472957e+04 8.01e+02 4.51e+06   0.5 1.85e+02    -  1.03e-01 6.00e-02f  1
+  46  3.4970425e+04 7.62e+02 4.27e+06   0.5 2.14e+02    -  2.79e-02 4.96e-02f  1
+  47  3.5232197e+04 7.28e+02 4.07e+06   0.5 2.51e+02    -  6.75e-02 4.33e-02f  1
+  48  3.5549517e+04 6.72e+02 3.76e+06   0.5 9.94e+01    -  3.89e-02 7.18e-02f  1
+  49  3.5682677e+04 6.11e+02 3.46e+06   0.5 2.65e+02    -  2.31e-02 7.81e-02f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  50  3.5766807e+04 5.65e+02 3.19e+06   0.5 9.54e+01    -  2.28e-02 7.48e-02f  1
+  51  3.5866607e+04 4.87e+02 2.86e+06   0.5 1.39e+02    -  2.51e-02 1.12e-01f  1
+  52  3.5845615e+04 4.55e+02 2.69e+06   0.5 9.27e+01    -  5.60e-02 6.59e-02f  1
+  53  3.6045916e+04 4.42e+02 2.65e+06   1.3 4.38e+02    -  3.44e-02 2.21e-02f  1
+  54  3.6189532e+04 4.19e+02 2.54e+06  -5.4 1.17e+02    -  2.09e-02 4.33e-02h  1
+  55  3.6431445e+04 3.97e+02 2.48e+06   1.2 1.88e+02    -  5.82e-02 4.62e-02f  1
+  56  3.6932553e+04 3.67e+02 2.40e+06   1.1 1.45e+02    -  4.69e-02 8.44e-02f  1
+  57  3.7253659e+04 3.42e+02 2.28e+06   0.5 6.99e+01    -  5.28e-02 7.11e-02f  1
+  58  3.8913348e+04 2.95e+02 2.14e+06   1.0 8.59e+01    -  9.92e-02 1.51e-01f  1
+  59  4.0252757e+04 2.14e+02 1.86e+06  -5.3 7.33e+01    -  5.22e-02 1.57e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  60  4.0185432e+04 2.04e+02 1.78e+06  -5.3 4.68e+01    -  6.99e-02 4.44e-02h  1
+  61  4.1126295e+04 1.69e+02 1.73e+06   0.9 7.25e+01    -  3.78e-02 1.50e-01f  1
+  62  4.2354873e+04 1.37e+02 1.49e+06   0.9 4.65e+01    -  1.22e-01 1.60e-01f  1
+  63  4.3088404e+04 1.21e+02 1.37e+06   1.1 3.33e+01    -  3.59e-01 1.07e-01f  1
+  64  4.5994742e+04 4.64e+01 1.24e+05   0.6 1.82e+01    -  2.27e-01 1.00e+00h  1
+  65  4.6076280e+04 5.66e+01 3.44e+04   0.7 1.83e+01    -  5.87e-01 7.13e-01f  1
+  66  4.7555064e+04 3.90e+01 1.29e+04   0.6 1.14e+01    -  8.40e-01 1.00e+00f  1
+  67  4.6643461e+04 1.28e+00 2.67e+03  -0.3 3.23e+00    -  8.08e-01 1.00e+00h  1
+  68  4.1450018e+04 5.76e+01 5.80e+03  -0.3 9.83e+00    -  9.99e-01 1.00e+00f  1
+  69  4.1977853e+04 2.40e+01 6.98e+03  -0.0 1.58e+01    -  1.00e+00 6.11e-01f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  70  4.0343266e+04 4.62e+00 3.85e+03  -0.6 3.58e+00    -  1.00e+00 1.00e+00h  1
+  71  3.1375712e+04 4.89e+01 8.60e+02  -0.8 1.49e+01    -  1.00e+00 8.77e-01f  1
+  72  3.4995740e+04 2.56e+01 1.98e+03  -0.5 9.69e+00    -  1.00e+00 1.00e+00f  1
+  73  3.1078140e+04 3.79e+00 6.75e+02  -0.8 6.77e+00    -  9.98e-01 1.00e+00f  1
+  74  2.5112200e+04 5.54e+01 1.96e+03  -0.9 1.42e+01    -  1.00e+00 1.00e+00f  1
+  75  3.1922747e+04 4.93e+01 1.03e+03  -0.7 1.36e+01    -  1.00e+00 9.92e-01f  1
+  76  2.9189772e+04 1.67e+01 1.46e+03  -0.8 6.35e+00    -  7.26e-01 7.99e-01f  1
+  77  2.7541759e+04 3.68e+01 1.10e+03  -0.8 9.79e+00    -  4.38e-01 9.65e-01f  1
+  78  2.7953725e+04 2.03e+01 5.76e+02  -0.8 5.13e+00    -  7.76e-01 1.00e+00f  1
+  79  2.6652257e+04 1.37e+01 5.12e+02  -1.0 6.07e+00    -  1.00e+00 3.60e-01f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  80  2.1438580e+04 8.06e+01 9.53e+02  -1.0 2.12e+01    -  9.72e-01 8.44e-01f  1
+  81  2.0627540e+04 2.29e+01 5.19e+02  -1.1 1.27e+01    -  1.00e+00 1.00e+00f  1
+  82  1.8200253e+04 3.38e+01 5.91e+02  -1.3 8.80e+00    -  1.00e+00 1.00e+00f  1
+  83  2.3455584e+04 5.08e+02 4.92e+03  -1.0 1.84e+01    -  1.00e+00 9.21e-01f  1
+  84  2.1999548e+04 2.97e+02 5.74e+03  -1.1 1.10e+01    -  1.55e-01 4.65e-01h  1
+  85  2.0303284e+04 1.65e+02 4.05e+03  -1.1 1.64e+01    -  9.21e-01 4.38e-01h  1
+  86  1.9183370e+04 1.12e+02 3.74e+03  -1.1 2.09e+01    -  9.80e-01 4.11e-01f  1
+  87  1.8946332e+04 1.05e+02 2.00e+03  -1.1 4.09e+01    -  5.25e-01 3.93e-01f  1
+  88  1.9374286e+04 4.88e+01 5.98e+02  -1.1 2.59e+01    -  4.24e-01 6.36e-01h  1
+  89  1.9976326e+04 1.32e+01 7.50e+02  -1.1 8.64e+00    -  3.52e-01 7.75e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  90  2.0132353e+04 5.62e+00 5.42e+02  -1.1 9.95e+00    -  7.16e-01 1.00e+00h  1
+  91  1.7788515e+04 3.01e+01 4.81e+02  -1.3 9.70e+00    -  1.00e+00 6.91e-01f  1
+  92  2.2952420e+04 1.89e+01 4.70e+02  -1.0 1.81e+01    -  1.00e+00 1.00e+00f  1
+  93  2.0142405e+04 3.19e+01 4.16e+02  -1.1 1.52e+01    -  7.90e-01 1.00e+00f  1
+  94  1.9470950e+04 3.14e+01 4.56e+02  -1.1 1.37e+01    -  6.81e-01 8.40e-01f  1
+  95  1.9566044e+04 1.36e+01 1.76e+02  -1.1 4.35e+00    -  1.00e+00 1.00e+00h  1
+  96  1.9378460e+04 3.25e+00 1.03e+02  -1.1 4.24e+00    -  1.00e+00 1.00e+00h  1
+  97  1.8931017e+04 3.85e+00 1.79e+02  -1.2 1.41e+01    -  7.66e-01 3.92e-01f  1
+  98  2.6250336e+04 2.98e+01 7.20e+02  -0.9 1.83e+01    -  1.00e+00 1.00e+00f  1
+  99  2.2479622e+04 3.43e+01 1.58e+03  -1.0 1.30e+01    -  5.88e-01 1.00e+00f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 100  2.1450322e+04 6.75e+00 2.46e+02  -1.0 4.72e+00    -  5.40e-01 1.00e+00f  1
+ 101  2.1420332e+04 1.00e+01 3.29e+02  -1.0 5.39e+00    -  1.00e+00 3.35e-01h  1
+ 102  2.1476906e+04 2.23e+01 3.37e+02  -1.0 9.71e+00    -  2.18e-01 3.44e-01f  1
+ 103  2.1482443e+04 3.40e+01 6.32e+02  -1.0 5.30e+00    -  7.22e-01 5.79e-01f  1
+ 104  2.1762897e+04 7.03e+00 4.70e+02  -1.0 5.46e+00    -  3.93e-01 1.00e+00f  1
+ 105  2.1605298e+04 1.41e+01 4.52e+02  -1.0 1.04e+01    -  1.00e+00 1.00e+00f  1
+ 106  2.1413410e+04 7.64e+00 3.53e+02  -1.0 5.46e+00    -  9.64e-01 8.75e-01h  1
+ 107  2.1467518e+04 4.16e+00 1.95e+02  -1.0 6.50e+00    -  1.00e+00 1.00e+00h  1
+ 108  2.1451138e+04 2.84e+00 7.10e+02  -1.0 1.69e+01    -  1.00e+00 4.36e-01f  1
+ 109  2.5906721e+04 1.58e+02 1.64e+03  -0.7 4.36e+01    -  1.00e+00 4.14e-01f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 110  2.3930181e+04 7.24e+01 2.08e+03  -0.8 1.40e+01    -  8.21e-01 1.00e+00f  1
+ 111  2.4083308e+04 4.28e+01 1.20e+03  -0.8 1.26e+01    -  4.12e-01 9.03e-01h  1
+ 112  2.4488978e+04 1.09e+01 9.49e+02  -0.8 8.15e+00    -  1.00e+00 7.88e-01h  1
+ 113  2.4460019e+04 6.94e+00 9.52e+02  -0.8 1.96e+00    -  1.00e+00 1.00e+00h  1
+ 114  2.4427761e+04 4.01e-01 1.20e+03  -0.8 1.05e+00    -  1.00e+00 1.00e+00h  1
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwfl.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwi18n.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwmcicore.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_conc_common.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_filesystem.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_log.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwcpp11compat.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwboost_log.so.1.85.0)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwboost_thread.so.1.85.0)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libicui18n.so.76)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwcppmicroservices.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_feature.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libCppMicroServices.so.3.8.13)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwboost_serialization.so.1.85.0)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwflcertificates.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_threadpool.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwinstall_cpputil.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwopcmodel.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwflstoragevfs.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwinstall_cppinstrset_processor.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwinstall_cppinstrset.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwflstorageprovider.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwflnetwork.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_eventmgr_client.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwinstall_ddux.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwflhttpclient_core.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwddux_loggingapi.so)
+/user/brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/InstallMathWorksServiceHost: /apps/brussel/RL9/zen4/software/GCCcore/13.3.0/lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found (required by /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/.MathWorks/ServiceHost/node608/temp/9ed7-51ac-1e3d-8090/v2026.11.0.3/_tempinstaller_glnxa64/bin/glnxa64/libmwfoundation_usm.so)
+ 115  2.1137414e+04 9.60e+01 1.07e+03  -1.1 7.44e+00    -  1.00e+00 1.00e+00f  1
+ 116  2.0097721e+04 3.31e+01 4.74e+02  -1.2 2.72e+00    -  1.00e+00 1.00e+00h  1
+ 117  1.9308749e+04 2.03e+01 6.25e+02  -1.2 2.75e+00    -  1.00e+00 1.00e+00h  1
+ 118  1.8702815e+04 1.20e+01 2.04e+02  -1.2 3.41e+00    -  1.00e+00 1.00e+00h  1
+ 119  1.7419242e+04 1.45e+01 4.24e+02  -1.3 6.65e+00    -  1.00e+00 8.91e-01f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 120  2.1042838e+04 1.18e+01 4.40e+02  -1.0 2.61e+01    -  1.00e+00 5.10e-01f  1
+ 121  1.9500779e+04 3.04e+01 3.00e+02  -1.1 5.40e+00    -  8.22e-01 1.00e+00f  1
+ 122  1.8621906e+04 1.59e+01 1.65e+02  -1.1 6.18e+00    -  3.92e-01 1.00e+00f  1
+ 123  1.8885287e+04 2.81e+00 1.52e+02  -1.1 5.07e+00    -  1.00e+00 1.00e+00h  1
+ 124  1.8229174e+04 1.64e+00 1.15e+02  -1.2 1.03e+01    -  1.00e+00 5.32e-01f  1
+ 125  1.9390260e+04 1.30e+01 1.63e+02  -1.0 3.90e+01    -  1.00e+00 2.04e-01f  1
+ 126  1.9706558e+04 8.58e+00 1.98e+02  -1.1 5.58e+00    -  9.62e-01 1.00e+00h  1
+ 127  1.9582476e+04 3.90e+00 2.51e+02  -1.1 9.67e+00    -  1.00e+00 5.51e-01h  1
+ 128  1.9825892e+04 1.10e+01 8.74e+01  -1.1 2.52e+00    -  1.00e+00 1.00e+00h  1
+ 129  1.9802142e+04 1.32e+00 6.60e+01  -1.1 2.41e+00    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 130  1.7505560e+04 3.97e+00 1.05e+02  -1.2 5.29e+00    -  9.92e-01 9.82e-01f  1
+ 131  1.5339924e+04 1.79e+01 1.60e+02  -1.3 7.23e+00    -  1.00e+00 1.00e+00f  1
+ 132  1.4127307e+04 2.05e+01 9.32e+01  -1.4 7.22e+00    -  1.00e+00 1.00e+00f  1
+ 133  1.2606167e+04 8.65e+00 6.63e+01  -1.6 1.21e+01    -  9.84e-01 1.00e+00f  1
+ 134  1.3836305e+04 1.14e+01 3.86e+02  -1.3 2.38e+01    -  1.00e+00 3.12e-01f  1
+ 135  1.3972839e+04 1.21e+01 1.92e+02  -1.4 5.72e+00    -  8.78e-01 1.00e+00h  1
+ 136  1.3908080e+04 7.41e+00 9.21e+01  -1.4 2.27e+00  -4.0 1.00e+00 1.00e+00h  1
+ 137  1.2676384e+04 4.06e+00 5.98e+01  -1.5 6.40e+00    -  9.98e-01 1.00e+00f  1
+ 138  1.5514644e+04 7.04e+00 1.01e+02  -1.3 2.22e+01    -  1.00e+00 4.92e-01f  1
+ 139  1.5128775e+04 2.65e+02 2.11e+03  -1.4 8.39e+00    -  2.94e-01 1.00e+00f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 140  1.5010719e+04 1.76e+02 3.17e+03  -1.4 5.82e+00    -  5.12e-01 3.71e-01h  1
+ 141  1.4793163e+04 7.28e+01 4.38e+03  -1.4 5.99e+00    -  1.00e+00 7.74e-01h  1
+ 142  1.4666679e+04 3.89e+01 2.98e+03  -1.4 1.48e+01    -  5.43e-01 8.75e-01h  1
+ 143  1.4522011e+04 2.73e+01 1.94e+03  -1.4 9.93e+00    -  4.38e-01 4.97e-01h  1
+ 144  1.4765382e+04 1.18e+01 1.68e+03  -1.4 9.00e+00    -  2.49e-01 1.00e+00h  1
+ 145  1.4893577e+04 2.35e+00 4.61e+02  -1.4 3.57e+00    -  1.00e+00 1.00e+00h  1
+ 146  1.3931075e+04 9.21e-01 7.38e+02  -1.6 3.53e+00    -  1.00e+00 1.00e+00f  1
+ 147  1.2699155e+04 2.26e+01 4.80e+02  -1.6 1.18e+01    -  8.80e-01 6.83e-01f  1
+ 148  1.1346022e+04 4.68e+01 1.47e+02  -1.7 8.09e+00    -  5.46e-01 9.42e-01f  1
+ 149  1.0907413e+04 1.25e+01 8.75e+01  -1.7 3.28e+00  -3.6 1.00e+00 7.59e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 150  1.0440466e+04 5.95e+00 6.68e+01  -1.7 3.00e+00    -  8.38e-01 1.00e+00h  1
+ 151  9.5806615e+03 2.17e+01 9.05e+01  -1.8 6.84e+00    -  1.00e+00 1.00e+00f  1
+ 152  9.3332708e+03 1.26e+02 4.69e+02  -1.8 1.30e+01    -  8.52e-01 1.00e+00h  1
+ 153  9.2377137e+03 3.93e+01 6.66e+02  -1.9 6.68e+00    -  1.00e+00 1.00e+00h  1
+ 154  8.5823284e+03 2.75e+01 3.10e+02  -1.9 3.36e+00    -  1.00e+00 9.84e-01h  1
+ 155  8.2660056e+03 2.92e+01 1.94e+02  -1.9 8.95e+00    -  8.00e-01 7.46e-01h  1
+ 156  8.4418526e+03 4.45e+00 6.76e+01  -1.9 5.09e+00    -  7.61e-01 1.00e+00h  1
+ 157  7.8418870e+03 4.83e+00 5.21e+01  -2.1 5.40e+00    -  1.00e+00 7.93e-01f  1
+ 158  9.6712384e+03 2.11e+01 1.09e+02  -1.8 1.24e+01    -  1.00e+00 1.00e+00f  1
+ 159  8.5307959e+03 1.40e+01 3.07e+01  -1.9 9.38e+00    -  8.39e-01 8.09e-01f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 160  8.3473312e+03 2.02e+01 4.04e+01  -1.9 1.17e+01  -4.1 2.31e-01 9.01e-01h  1
+ 161  8.2127164e+03 6.96e+00 3.62e+01  -1.9 5.50e+00    -  1.00e+00 9.60e-01h  1
+ 162  8.2747790e+03 1.43e+01 2.78e+01  -1.9 5.24e+00    -  1.00e+00 1.00e+00h  1
+ 163  8.2520767e+03 4.20e+00 1.80e+01  -1.9 4.27e+00    -  1.00e+00 1.00e+00h  1
+ 164  7.4388995e+03 7.75e+00 9.11e+01  -2.1 5.75e+00    -  1.00e+00 1.00e+00f  1
+ 165  6.4476342e+03 2.09e+01 6.51e+01  -2.3 1.26e+01    -  9.15e-01 5.99e-01f  1
+ 166  6.1651196e+03 2.25e+01 1.23e+02  -2.3 1.33e+01    -  8.62e-01 1.00e+00h  1
+ 167  5.9120261e+03 1.50e+01 6.43e+01  -2.4 8.12e+00    -  1.00e+00 1.00e+00h  1
+ 168  5.8518806e+03 1.97e+01 7.47e+01  -2.4 9.71e+00    -  8.25e-01 1.00e+00h  1
+ 169  5.6138976e+03 1.44e+01 2.34e+01  -2.4 5.09e+00    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 170  5.3463022e+03 3.43e+00 5.12e+01  -2.6 5.34e+00    -  1.00e+00 9.87e-01h  1
+ 171  6.0889580e+03 9.53e+00 6.80e+01  -2.3 1.17e+01    -  6.55e-01 8.81e-01f  1
+ 172  5.6083708e+03 3.78e+01 1.45e+02  -2.5 1.89e+01    -  2.73e-01 7.01e-01f  1
+ 173  5.3250705e+03 1.74e+01 3.19e+01  -2.5 1.86e+01    -  9.40e-01 9.47e-01h  1
+ 174  5.9240161e+03 1.22e+01 2.37e+01  -2.2 1.02e+01    -  7.01e-01 6.38e-01h  1
+ 175  5.8860758e+03 2.70e+01 2.51e+02  -2.4 1.77e+01    -  3.91e-01 7.88e-01H  1
+ 176  5.7058596e+03 1.62e+01 1.35e+02  -2.4 1.82e+01    -  3.47e-01 4.74e-01f  1
+ 177  5.6129076e+03 2.14e+01 3.86e+01  -2.4 7.14e+00    -  5.67e-01 1.00e+00h  1
+ 178  5.5885664e+03 7.20e+00 1.89e+01  -2.4 4.44e+00    -  9.11e-01 1.00e+00h  1
+ 179  5.0444102e+03 1.01e+01 7.36e+01  -2.6 7.03e+00    -  1.00e+00 1.00e+00f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 180  4.9230534e+03 6.56e+00 5.77e+01  -3.9 3.04e+00  -2.8 4.56e-01 3.73e-01h  1
+ 181  4.7752560e+03 5.46e+00 4.98e+01  -2.9 1.98e+01    -  6.97e-01 2.35e-01h  1
+ 182  5.0001256e+03 6.49e+00 1.11e+02  -2.5 1.67e+01    -  5.48e-01 6.13e-01f  1
+ 183  4.8280509e+03 6.97e+00 1.10e+02  -2.7 1.41e+01    -  4.96e-01 6.05e-01h  1
+ 184  4.7976940e+03 6.37e+00 1.06e+02  -2.7 1.24e+01    -  5.93e-01 9.35e-02h  1
+ 185  4.6450358e+03 8.04e+00 4.66e+01  -2.7 1.50e+01    -  3.13e-01 6.59e-01h  1
+ 186  5.2470244e+03 7.01e+00 2.57e+01  -2.5 1.04e+01    -  4.24e-01 1.00e+00f  1
+ 187  4.9957764e+03 1.58e+01 2.88e+01  -2.7 1.81e+01    -  1.81e-01 3.75e-01h  1
+ 188  4.7428870e+03 9.13e+00 6.89e+01  -2.7 1.15e+01    -  3.78e-01 6.52e-01h  1
+ 189  5.6539501e+03 2.78e+01 1.11e+02  -2.4 2.03e+01    -  2.37e-01 1.00e+00f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 190  5.3623314e+03 2.11e+01 1.05e+02  -2.6 2.75e+01    -  5.37e-01 2.52e-01h  1
+ 191  5.0398482e+03 1.31e+01 9.06e+01  -2.6 2.11e+01    -  2.46e-01 3.47e-01f  1
+ 192  4.8562919e+03 2.56e+01 6.96e+01  -2.6 2.06e+01    -  1.36e-01 3.69e-01h  1
+ 193  4.6800261e+03 4.51e+00 1.86e+01  -2.6 1.11e+01    -  1.00e+00 9.16e-01h  1
+ 194  5.5524777e+03 1.23e+01 3.15e+01  -2.1 4.33e+01    -  1.69e-01 2.78e-01f  1
+ 195  5.5303156e+03 1.14e+01 2.93e+01  -2.6 3.73e+00  -2.9 3.66e-01 7.21e-02h  1
+ 196  5.1146753e+03 8.14e+00 4.63e+01  -2.6 1.74e+01    -  2.48e-01 4.60e-01f  1
+ 197  5.0269932e+03 6.89e+00 1.38e+01  -2.6 1.57e+01    -  3.65e-01 1.75e-01h  1
+ 198  4.8266116e+03 8.56e+00 4.17e+01  -2.6 4.93e+00    -  2.59e-01 1.00e+00h  1
+ 199  4.8886295e+03 5.08e+00 5.55e+01  -2.5 8.08e+00    -  4.78e-01 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 200  4.6950594e+03 8.46e-01 3.53e+01  -2.6 6.20e+00    -  1.00e+00 1.00e+00h  1
+ 201  4.6724692e+03 1.72e+00 4.77e+01  -2.6 4.13e+00    -  8.39e-01 1.00e+00h  1
+ 202  4.6595964e+03 3.22e+00 2.83e+01  -2.6 3.83e+00    -  5.20e-01 1.00e+00h  1
+ 203  4.6431112e+03 5.01e+00 3.27e+01  -2.6 1.32e+01    -  4.20e-01 2.64e-01h  1
+ 204  4.9580653e+03 7.42e+00 2.38e+01  -2.3 2.65e+01    -  8.63e-01 2.22e-01f  1
+ 205  5.3284188e+03 4.69e+01 1.36e+02  -2.4 1.22e+01    -  2.71e-01 8.90e-01f  1
+ 206  5.1304009e+03 1.84e+01 1.50e+02  -2.4 9.44e+00    -  2.12e-01 1.00e+00h  1
+ 207  5.1805264e+03 1.08e+00 2.16e+01  -2.4 6.13e+00    -  1.00e+00 1.00e+00h  1
+ 208  5.1812676e+03 1.54e-01 2.19e+01  -2.4 2.59e+00    -  1.00e+00 1.00e+00h  1
+ 209  4.8105393e+03 4.73e+00 3.26e+01  -2.6 6.24e+00    -  1.00e+00 1.00e+00f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 210  4.7962793e+03 4.66e+00 3.22e+01  -2.7 2.07e+01    -  3.83e-01 2.30e-02h  1
+ 211  4.5110471e+03 3.42e+00 3.39e+01  -2.7 7.52e+00    -  1.00e+00 9.33e-01h  1
+ 212  5.2873187e+03 8.53e+00 7.41e+01  -2.3 2.33e+01    -  7.48e-01 5.53e-01f  1
+ 213  5.1232807e+03 1.85e+01 5.86e+01  -2.5 2.10e+01    -  3.23e-01 6.60e-01h  1
+ 214  4.9465772e+03 3.58e+00 2.19e+01  -2.5 9.69e+00    -  8.37e-01 1.00e+00h  1
+ 215  4.9138338e+03 2.65e+00 1.78e+01  -2.5 1.06e+01    -  9.51e-01 1.00e+00h  1
+ 216  4.9499214e+03 1.33e+00 1.13e+01  -2.5 4.27e+00    -  1.00e+00 1.00e+00h  1
+ 217  4.6145939e+03 4.68e+00 2.24e+01  -2.6 7.34e+00    -  1.00e+00 1.00e+00f  1
+ 218  5.3746265e+03 5.34e+00 2.92e+01  -2.1 1.58e+01  -3.9 5.65e-01 3.93e-01f  1
+ 219  5.3594549e+03 7.28e+00 3.00e+01  -2.3 1.11e+01    -  6.20e-01 4.96e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 220  5.3290728e+03 5.25e+00 1.99e+01  -2.3 6.65e+00    -  2.54e-01 1.00e+00h  1
+ 221  5.3201280e+03 3.18e-01 1.54e+01  -2.3 3.73e+00    -  1.00e+00 1.00e+00h  1
+ 222  5.3355807e+03 8.92e-01 2.35e+01  -2.3 2.40e+00    -  1.00e+00 1.00e+00h  1
+ 223  5.3387897e+03 8.10e-01 1.78e+01  -2.3 1.42e+00    -  1.00e+00 1.00e+00h  1
+ 224  5.3341040e+03 6.96e+00 2.23e+01  -2.3 5.45e+00    -  9.47e-01 8.17e-01h  1
+ 225  5.3324446e+03 8.51e-01 1.62e+01  -2.3 4.51e+00    -  1.00e+00 1.00e+00h  1
+ 226  5.3395163e+03 1.23e+00 5.85e+01  -2.3 2.73e+00    -  9.94e-01 1.00e+00h  1
+ 227  5.3429767e+03 4.22e+00 9.91e+01  -2.3 3.00e+00    -  1.00e+00 1.00e+00h  1
+ 228  5.3284128e+03 1.38e+01 5.57e+01  -2.3 1.04e+01    -  1.00e+00 1.00e+00h  1
+ 229  5.3109589e+03 1.08e+01 5.74e+01  -2.3 1.01e+01    -  2.05e-01 2.36e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 230  5.3050780e+03 2.00e+00 2.44e+01  -2.3 8.58e+00    -  1.00e+00 1.00e+00h  1
+ 231  5.2973839e+03 6.28e-01 1.94e+01  -2.3 2.75e+00    -  1.00e+00 1.00e+00h  1
+ 232  5.2977274e+03 1.18e+00 4.70e+01  -2.3 1.36e+00    -  1.00e+00 1.00e+00h  1
+ 233  4.9313619e+03 4.37e-01 1.79e+01  -2.8 2.26e+00    -  1.00e+00 1.00e+00f  1
+ 234  4.6113286e+03 2.03e+00 2.35e+01  -2.9 9.54e+00    -  5.59e-01 3.40e-01f  1
+ 235  4.6926508e+03 2.79e+00 1.93e+01  -2.5 1.01e+01    -  9.52e-01 4.69e-01f  1
+ 236  4.6056487e+03 5.56e+00 3.92e+01  -2.6 5.12e+00    -  2.77e-01 1.00e+00h  1
+ 237  5.4497255e+03 6.18e+00 3.92e+01  -2.3 8.70e+00    -  7.85e-01 8.24e-01f  1
+ 238  5.2558347e+03 4.62e+00 7.58e+01  -2.4 1.03e+01  -4.9 3.56e-01 8.06e-01H  1
+ 239  4.9539170e+03 1.15e+01 4.02e+01  -2.4 1.03e+01    -  1.00e+00 1.00e+00f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 240  4.9360781e+03 1.21e+01 4.44e+01  -2.4 8.90e+00    -  7.27e-01 1.00e+00h  1
+ 241  4.9845735e+03 5.39e+00 1.87e+01  -2.4 5.35e+00    -  1.00e+00 1.00e+00h  1
+ 242  5.0019127e+03 3.31e-01 4.33e+00  -2.4 1.52e+00    -  1.00e+00 1.00e+00h  1
+ 243  4.5797960e+03 7.30e-01 2.01e+01  -2.6 3.47e+00    -  1.00e+00 1.00e+00f  1
+ 244  4.5429730e+03 4.42e+00 2.22e+01  -2.6 1.15e+01    -  1.00e+00 3.42e-01h  2
+ 245  4.3569901e+03 2.54e+00 7.76e+01  -2.8 4.55e+00    -  1.00e+00 4.87e-01f  1
+ 246  4.4582860e+03 1.87e+01 9.87e+01  -2.6 1.51e+01    -  1.00e+00 6.00e-01h  1
+ 247  4.3751860e+03 4.80e+00 5.07e+01  -2.7 7.62e+00    -  5.24e-01 7.62e-01h  1
+ 248  4.3317203e+03 2.74e+00 2.01e+01  -2.7 5.47e+00    -  1.00e+00 1.00e+00h  1
+ 249  4.0827826e+03 6.76e-01 5.09e+01  -2.8 3.47e+00    -  1.00e+00 9.71e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 250  3.8419740e+03 2.02e+01 5.85e+01  -8.8 3.57e+01  -6.3 1.94e-01 4.11e-01f  1
+ 251  3.7751836e+03 1.53e+01 5.89e+01  -3.0 1.77e+01    -  8.91e-01 1.00e+00h  1
+ 252  3.7650852e+03 6.12e+00 2.10e+01  -3.1 1.04e+01    -  1.00e+00 8.72e-01h  1
+ 253  3.7957129e+03 2.26e-01 3.25e+00  -3.1 3.56e+00    -  8.46e-01 1.00e+00h  1
+ 254  3.7813704e+03 2.46e+00 3.88e+01  -3.1 3.47e+00    -  9.99e-01 9.96e-01h  1
+ 255  3.6967477e+03 2.02e+00 2.01e+01  -3.3 8.42e+00    -  1.00e+00 7.00e-01h  1
+ 256  3.7746471e+03 1.96e+01 3.18e+01  -3.0 1.36e+01    -  4.78e-01 7.00e-01h  1
+ 257  3.6907776e+03 5.75e+00 2.56e+01  -3.2 8.83e+00    -  8.71e-01 6.82e-01h  1
+ 258  3.6808943e+03 9.87e-01 9.94e+00  -3.2 1.53e+01    -  5.83e-01 8.89e-01h  1
+ 259  3.6156906e+03 1.55e+00 8.51e+00  -3.3 8.53e+00    -  1.00e+00 9.83e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 260  3.5711419e+03 6.15e-01 4.83e+00  -3.6 3.48e+00    -  1.00e+00 6.44e-01h  1
+ 261  3.5761059e+03 3.40e+00 1.96e+01  -3.3 2.03e+01  -5.5 7.83e-01 4.23e-01h  1
+ 262  3.5580304e+03 1.41e+01 6.27e+01  -3.5 1.38e+01    -  5.03e-01 3.35e-01h  1
+ 263  3.5163500e+03 9.02e+00 6.56e+01  -3.9 1.58e+01    -  4.31e-01 3.81e-01h  1
+ 264  3.5405807e+03 5.38e+00 5.21e+01  -3.3 1.44e+01    -  4.81e-01 5.14e-01h  1
+ 265  3.5026065e+03 1.80e+00 2.58e+01  -3.5 1.04e+01    -  1.00e+00 7.54e-01h  1
+ 266  3.4843146e+03 7.14e-01 8.56e+00  -3.8 2.33e+00    -  9.56e-01 6.03e-01h  1
+ 267  3.5072682e+03 2.18e+00 1.20e+01  -3.5 7.43e+00    -  9.63e-01 9.59e-01h  1
+ 268  3.4850668e+03 1.47e+00 1.02e+01  -3.6 5.63e+00    -  8.40e-01 6.58e-01h  1
+ 269  3.5352756e+03 1.87e+01 4.20e+01  -3.3 1.67e+01    -  8.70e-01 8.67e-01f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 270  3.4852240e+03 5.66e+00 3.13e+01  -3.4 1.08e+01    -  9.35e-02 8.69e-01h  1
+ 271  3.4991838e+03 5.65e-01 7.25e+00  -3.4 1.86e+00    -  1.01e-01 1.00e+00h  1
+ 272  3.4692959e+03 4.57e-01 4.63e+00  -3.6 2.12e+00    -  1.00e+00 9.44e-01h  1
+ 273  3.5076149e+03 1.06e+01 2.84e+01  -3.4 5.85e+00    -  1.00e+00 8.96e-01f  1
+ 274  3.4938416e+03 2.94e+00 2.26e+01  -3.5 8.70e+00    -  1.00e+00 7.22e-01h  1
+ 275  3.4837780e+03 4.10e+00 1.25e+01  -3.5 5.87e+00    -  7.62e-01 1.00e+00h  1
+ 276  3.4769163e+03 1.26e+00 7.55e+00  -3.5 3.82e+00    -  1.00e+00 1.00e+00h  1
+ 277  3.4784892e+03 1.11e-01 1.86e+01  -3.5 1.15e+00    -  1.00e+00 1.00e+00h  1
+ 278  3.5631044e+03 3.95e+00 2.18e+01  -3.1 1.05e+01    -  5.33e-01 6.27e-01f  1
+ 279  3.5445718e+03 1.45e+01 6.48e+01  -3.3 2.03e+01    -  7.14e-01 3.53e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 280  3.5152232e+03 8.56e+00 5.81e+01  -3.3 1.05e+01  -5.9 4.40e-02 3.91e-01h  1
+ 281  3.4953181e+03 1.47e+00 1.65e+01  -3.3 6.93e+00    -  1.00e+00 1.00e+00h  1
+ 282  3.4934235e+03 1.68e-01 7.20e+00  -3.3 5.78e+00    -  8.72e-01 1.00e+00h  1
+ 283  3.4940885e+03 6.64e-02 4.18e+00  -3.3 1.22e+00    -  1.00e+00 1.00e+00h  1
+ 284  3.4902792e+03 5.28e+00 2.17e+01  -3.3 9.01e+00    -  6.68e-01 1.00e+00h  1
+ 285  3.4864174e+03 4.04e+01 3.86e+01  -3.3 1.43e+01    -  8.65e-01 6.59e-01h  1
+ 286  3.4806123e+03 3.88e+00 2.71e+01  -3.3 1.23e+01    -  4.17e-01 1.00e+00h  1
+ 287  3.4833403e+03 2.10e-01 1.06e+01  -3.3 1.19e+01    -  7.16e-01 1.00e+00h  1
+ 288  3.4768222e+03 1.15e+00 5.04e+00  -3.3 2.41e+00    -  1.00e+00 1.00e+00h  1
+ 289  3.4404259e+03 1.54e-01 2.20e+00  -3.7 9.57e-01    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 290  3.4391400e+03 2.96e-01 3.80e+00  -3.5 2.17e+00    -  1.00e+00 1.00e+00h  1
+ 291  3.4108850e+03 1.32e+01 1.91e+01  -3.7 2.54e+00    -  1.00e+00 1.00e+00h  1
+ 292  3.4546075e+03 5.05e-01 1.43e+01  -3.4 4.30e+00    -  1.00e+00 1.00e+00h  1
+ 293  3.4302234e+03 9.82e-01 5.42e+00  -3.5 3.99e+00    -  1.00e+00 1.00e+00h  1
+ 294  3.4069993e+03 5.40e-01 3.81e+00  -3.7 1.32e+00    -  1.00e+00 1.00e+00h  1
+ 295  3.3921029e+03 3.20e-01 5.58e+00  -3.9 1.71e+00    -  1.00e+00 9.28e-01h  1
+ 296  3.3885059e+03 7.28e-01 1.07e+01  -3.9 8.60e+00    -  1.00e+00 2.34e-01h  2
+ 297  3.3782251e+03 2.13e+00 6.75e+00  -4.1 6.07e+00    -  9.97e-01 7.80e-01h  1
+ 298  3.3960549e+03 6.57e+00 4.95e+01  -3.7 8.03e+00    -  7.18e-01 9.03e-01h  1
+ 299  3.3784812e+03 1.49e+00 3.12e+01  -3.9 5.15e+00    -  2.70e-01 8.28e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 300  3.3761316e+03 1.14e-01 3.70e+00  -3.9 2.30e+00    -  1.00e+00 1.00e+00h  1
+ 301  3.3682994e+03 7.73e-02 1.67e+00  -4.1 8.13e-01    -  1.00e+00 1.00e+00h  1
+ 302  3.3768026e+03 1.25e+00 5.20e+00  -3.8 4.16e+00    -  1.00e+00 1.00e+00h  1
+ 303  3.3734935e+03 1.82e+00 7.98e+00  -3.9 1.20e+01    -  4.82e-01 3.36e-01h  1
+ 304  3.3710661e+03 1.36e+00 6.56e+00  -3.9 5.93e+00    -  1.00e+00 1.00e+00h  1
+ 305  3.3703100e+03 2.44e-01 5.27e+00  -3.9 5.57e+00    -  1.00e+00 1.00e+00h  1
+ 306  3.3681469e+03 7.67e-02 7.16e-01  -3.9 3.65e+00    -  1.00e+00 1.00e+00h  1
+ 307  3.3582866e+03 1.32e-02 7.72e-01  -4.2 7.00e-01    -  1.00e+00 1.00e+00h  1
+ 308  3.3563456e+03 1.61e-01 3.34e+00  -4.2 4.27e+00    -  1.00e+00 7.43e-01h  1
+ 309  3.3551924e+03 2.32e-01 5.42e+00  -4.2 5.08e+00    -  1.00e+00 6.58e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 310  3.3516135e+03 1.84e+00 1.53e+01  -4.4 5.32e+00    -  1.00e+00 1.00e+00h  1
+ 311  3.3474829e+03 1.87e+00 3.14e+00  -4.5 2.48e+00    -  8.86e-01 1.00e+00h  1
+ 312  3.3495220e+03 1.69e-01 3.43e+00  -4.5 1.25e+00    -  1.00e+00 1.00e+00h  1
+ 313  3.3481924e+03 6.02e-02 6.56e-01  -4.7 1.11e+00    -  1.00e+00 9.90e-01h  1
+ 314  3.3480983e+03 1.96e-02 6.01e-01  -4.7 1.49e+00    -  1.00e+00 8.62e-01h  1
+ 315  3.3486822e+03 2.14e-01 3.31e+00  -4.4 7.81e+00    -  5.01e-01 4.98e-01h  1
+ 316  3.3483868e+03 2.70e-01 3.11e+00  -4.6 1.86e+01    -  2.91e-01 9.81e-02h  2
+ 317  3.3478805e+03 1.01e-01 2.82e+00  -4.6 3.75e+00    -  1.00e+00 8.05e-01H  1
+ 318  3.3471268e+03 1.14e-01 3.31e+00  -4.6 4.67e+00    -  1.00e+00 4.02e-01h  1
+ 319  3.3468879e+03 2.83e-01 3.17e+00  -4.8 3.02e+00    -  7.11e-01 8.36e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 320  3.3474477e+03 2.59e-01 1.51e+00  -4.5 1.65e+00    -  1.00e+00 1.00e+00h  1
+ 321  3.3474093e+03 3.32e-01 3.54e+00  -4.5 1.24e+00    -  1.00e+00 1.00e+00h  1
+ 322  3.3450537e+03 1.41e-01 1.56e-01  -4.8 1.09e+00    -  1.00e+00 1.00e+00h  1
+ 323  3.3446363e+03 3.58e-03 2.15e-01  -5.0 4.49e-01    -  1.00e+00 9.81e-01h  1
+ 324  3.3458264e+03 7.36e-02 1.71e+00  -4.6 4.43e+00    -  1.00e+00 6.52e-01h  1
+ 325  3.3463206e+03 6.20e-03 2.44e+00  -4.7 3.08e+00    -  1.00e+00 1.00e+00H  1
+ 326  3.3452925e+03 1.57e-01 1.66e+00  -4.7 1.47e+00    -  1.00e+00 1.00e+00h  1
+ 327  3.3452916e+03 6.75e-02 1.14e+00  -4.7 9.82e-01    -  1.00e+00 1.00e+00h  1
+ 328  3.3454039e+03 1.96e-02 7.28e-01  -4.7 7.81e-01    -  1.00e+00 1.00e+00h  1
+ 329  3.3454207e+03 6.66e-03 4.46e-01  -4.7 7.76e-01    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 330  3.3453752e+03 3.86e-03 3.31e-01  -4.7 4.30e-01    -  1.00e+00 1.00e+00h  1
+ 331  3.3438225e+03 8.94e-03 6.90e-01  -5.1 8.63e-01  -7.9 1.00e+00 9.87e-01h  1
+ 332  3.3445459e+03 1.32e-02 5.63e-01  -4.8 1.14e+00    -  1.00e+00 1.00e+00h  1
+ 333  3.3441881e+03 4.49e-02 8.81e-01  -4.9 3.28e+00    -  1.00e+00 1.00e+00h  1
+ 334  3.3441425e+03 3.58e-02 1.35e+00  -4.9 3.94e+00    -  1.00e+00 3.77e-01h  1
+ 335  3.3440836e+03 2.58e-02 5.68e-01  -4.9 8.55e-01    -  4.66e-01 1.00e+00h  1
+ 336  3.3440133e+03 4.37e-03 2.52e-01  -4.9 5.29e-01    -  1.00e+00 1.00e+00h  1
+ 337  3.3436774e+03 2.33e-03 1.02e-01  -5.2 1.27e+00    -  1.00e+00 4.67e-01h  1
+ 338  3.3441996e+03 5.05e-03 2.37e-01  -4.6 3.69e+00    -  6.48e-01 2.57e-01h  1
+ 339  3.3442943e+03 3.30e-02 4.18e-01  -4.9 1.91e+00    -  9.61e-01 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 340  3.3442500e+03 3.67e-02 7.84e-01  -4.9 9.94e+00    -  6.78e-01 9.72e-02h  4
+ 341  3.3447589e+03 2.62e-03 1.76e+00  -4.9 1.89e+00    -  1.00e+00 1.00e+00H  1
+ 342  3.3440165e+03 9.67e-02 5.06e-01  -4.9 2.55e+00    -  1.00e+00 1.00e+00h  1
+ 343  3.3442291e+03 5.00e-02 7.94e-01  -4.9 1.82e+00    -  1.00e+00 5.00e-01h  2
+ 344  3.3441852e+03 1.09e-02 1.15e-01  -4.9 5.58e-01    -  1.00e+00 1.00e+00h  1
+ 345  3.3442074e+03 1.73e-04 1.00e-01  -4.9 9.74e-02    -  1.00e+00 1.00e+00h  1
+ 346  3.3434397e+03 4.96e-03 2.10e-01  -5.2 6.00e-01    -  9.95e-01 7.68e-01h  1
+ 347  3.3432869e+03 1.06e-01 1.13e+00  -5.5 6.12e+00    -  3.75e-01 2.65e-01h  1
+ 348  3.3428220e+03 8.48e-03 7.12e-01  -5.6 2.96e-02  -2.1 1.00e+00 1.00e+00h  1
+ 349  3.3434968e+03 1.01e-02 2.14e+00  -5.3 1.63e+00    -  1.00e+00 8.48e-01H  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 350  3.3425465e+03 8.55e-02 6.02e-01  -5.7 9.85e-01    -  1.00e+00 8.87e-01h  1
+ 351  3.3430387e+03 2.54e-03 3.02e+00  -5.8 1.01e+00    -  1.00e+00 1.00e+00H  1
+ 352  3.3424540e+03 7.44e-02 4.04e-01  -5.8 7.47e-01    -  1.00e+00 8.27e-01h  1
+ 353  3.3424752e+03 3.20e-03 1.44e-01  -6.3 1.93e-01    -  1.00e+00 1.00e+00h  1
+ 354  3.3424728e+03 7.93e-04 9.05e-02  -6.4 1.66e-01    -  1.00e+00 7.76e-01h  1
+ 355  3.3424587e+03 5.62e-04 1.14e-01  -7.1 2.17e-01    -  1.00e+00 2.94e-01h  1
+ 356  3.3424472e+03 5.90e-04 1.14e-01  -7.1 2.80e+00    -  1.00e+00 9.58e-02h  1
+ 357  3.3424249e+03 2.58e-04 8.52e-02  -7.1 9.16e-03  -2.5 1.00e+00 8.17e-01h  1
+ 358  3.3424198e+03 2.76e-04 1.03e-01  -6.6 1.93e+00    -  7.26e-01 1.48e-01h  1
+ 359  3.3424127e+03 3.89e-04 1.56e-01  -7.3 2.96e+00    -  4.34e-01 9.05e-02h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 360  3.3424062e+03 6.13e-04 2.20e-01  -7.0 4.34e+00    -  4.87e-01 1.02e-01h  1
+ 361  3.3423989e+03 7.79e-04 2.95e-01  -6.9 4.46e+00    -  8.62e-01 1.50e-01h  1
+ 362  3.3423995e+03 1.95e-03 4.59e-01  -6.5 4.39e+00    -  5.23e-01 1.56e-01h  1
+ 363  3.3423971e+03 1.82e-03 4.70e-01  -6.8 1.43e+00    -  5.03e-01 1.01e-01h  1
+ 364  3.3423857e+03 1.44e-03 4.13e-01  -7.2 1.26e+00    -  8.74e-01 4.05e-01h  1
+ 365  3.3423780e+03 5.77e-04 1.70e-01  -7.2 1.02e-02  -2.2 9.82e-01 9.69e-01h  1
+ 366  3.3423776e+03 4.45e-04 2.25e-01  -6.9 8.13e-01    -  1.00e+00 2.44e-01h  1
+ 367  3.3423739e+03 1.31e-05 2.28e-02  -7.5 1.60e-03  -1.8 1.00e+00 1.00e+00h  1
+ 368  3.3423713e+03 1.05e-05 5.47e-03  -8.0 9.30e-04  -1.4 1.00e+00 1.00e+00h  1
+ 369  3.3423710e+03 1.23e-05 1.31e-02  -9.0 3.45e+00    -  2.12e-01 6.58e-03h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 370  3.3423690e+03 7.11e-04 1.70e-01  -7.9 2.35e+00    -  1.00e+00 1.57e-01h  1
+ 371  3.3423672e+03 1.14e-03 3.49e-01  -7.5 3.03e+00    -  9.45e-01 7.53e-02h  1
+ 372  3.3423665e+03 2.50e-03 6.18e-01  -8.0 3.04e+00    -  6.09e-02 1.07e-01h  1
+ 373  3.3423702e+03 3.15e-03 9.12e-01  -7.3 1.05e+00    -  1.88e-01 3.57e-01h  1
+ 374  3.3423991e+03 1.24e-03 8.17e-01  -7.6 6.70e-01    -  4.34e-01 8.04e-01h  1
+ 375  3.3423657e+03 1.93e-03 1.11e-01  -7.6 3.71e-01    -  2.05e-01 1.00e+00f  1
+ 376  3.3424551e+03 7.48e-05 6.90e-01  -6.8 4.05e-01    -  9.65e-01 1.00e+00H  1
+ 377  3.3423506e+03 8.49e-03 7.04e-02  -6.9 2.97e-01    -  1.00e+00 1.00e+00h  1
+ 378  3.3423664e+03 2.51e-04 1.20e-01  -7.3 8.80e-02    -  1.00e+00 1.00e+00h  1
+ 379  3.3423610e+03 1.73e-04 3.15e-02  -8.1 5.56e-02    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 380  3.3423605e+03 5.44e-05 9.35e-03  -8.9 1.57e-02    -  1.00e+00 7.05e-01h  1
+ 381  3.3423604e+03 3.82e-05 1.08e-02  -8.9 6.83e-02    -  1.00e+00 2.99e-01h  1
+ 382  3.3423599e+03 4.88e-05 3.25e-02  -9.0 1.53e+00    -  3.73e-01 8.27e-02h  1
+ 383  3.3423599e+03 3.80e-08 4.10e-04  -9.0 4.02e-05   0.2 1.00e+00 1.00e+00h  1
+ 384  3.3423598e+03 6.70e-07 2.20e-02  -9.3 1.14e+00    -  3.51e-01 1.29e-02h  1
+ 385  3.3423587e+03 3.08e-04 4.85e-02  -9.2 1.41e+00    -  8.63e-01 2.43e-01h  1
+ 386  3.3423587e+03 2.40e-06 1.39e-03  -9.4 1.06e-04  -0.3 1.00e+00 9.92e-01h  1
+ 387  3.3423587e+03 4.11e-07 7.78e-04  -9.5 1.90e-04  -0.8 1.00e+00 9.73e-01h  1
+ 388  3.3423581e+03 2.68e-05 7.24e-02  -9.9 4.42e+00    -  1.87e-01 2.40e-02h  1
+ 389  3.3423579e+03 3.16e-04 1.29e-01  -9.6 2.06e+00    -  1.43e-02 1.27e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 390  3.3423579e+03 3.14e-04 1.25e-01  -9.6 1.07e+00    -  1.00e+00 6.94e-03h  1
+ 391  3.3423572e+03 3.45e-04 1.44e-01  -8.6 1.50e+00    -  5.59e-02 1.10e-01h  1
+ 392  3.3423579e+03 1.01e-04 4.08e-02  -8.4 4.18e-04  -0.5 1.00e+00 7.08e-01h  1
+ 393  3.3423576e+03 1.04e-04 3.34e-02  -8.1 7.20e-01    -  1.83e-01 4.00e-02h  1
+ 394  3.3423683e+03 3.30e-06 2.88e-01  -7.9 2.19e-01    -  2.31e-01 1.00e+00H  1
+ 395  3.3423589e+03 3.20e-04 1.36e-01  -8.3 1.72e-01    -  6.88e-01 5.14e-01h  1
+ 396  3.3423574e+03 2.85e-04 1.21e-01  -8.3 1.50e-01    -  9.92e-01 1.94e-01f  1
+ 397  3.3423574e+03 2.83e-04 9.65e-02  -8.0 1.74e-03  -1.5 1.00e+00 7.81e-03f  8
+ 398  3.3423580e+03 4.00e-04 1.68e-01  -7.6 4.93e-02    -  3.89e-01 1.00e+00h  1
+ 399  3.3423648e+03 4.56e-05 3.62e-02  -7.1 5.82e-03  -2.5 1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 400  3.3423631e+03 1.49e-06 1.67e-02  -7.2 2.08e-02    -  1.00e+00 1.00e+00h  1
+ 401  3.3423631e+03 2.05e-06 9.43e-03  -7.2 1.09e-02    -  9.96e-01 1.00e+00h  1
+ 402  3.3423630e+03 1.92e-06 5.53e-03  -7.2 2.12e-03  -2.9 1.00e+00 1.00e+00h  1
+ 403  3.3423751e+03 1.47e-06 1.39e-01  -7.2 1.96e-01    -  5.67e-01 1.00e+00H  1
+ 404  3.3423657e+03 4.96e-07 1.90e-01  -7.2 2.09e-01    -  1.00e+00 1.00e+00H  1
+ 405  3.3423600e+03 1.54e-03 2.33e-01  -7.2 6.03e-02    -  1.00e+00 1.00e+00h  1
+ 406  3.3423625e+03 2.10e-04 3.27e-02  -7.2 9.80e-03  -2.6 1.00e+00 1.00e+00h  1
+ 407  3.3423627e+03 8.05e-06 3.19e-02  -7.2 3.91e-02    -  1.00e+00 1.00e+00H  1
+ 408  3.3423631e+03 3.04e-08 1.94e-03  -7.2 3.77e-02    -  1.00e+00 1.00e+00H  1
+ 409  3.3423624e+03 4.58e-05 1.84e-02  -7.2 3.26e-02    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 410  3.3423626e+03 7.35e-06 2.31e-02  -7.2 2.65e-02    -  1.00e+00 1.00e+00h  1
+ 411  3.3423624e+03 4.64e-06 3.10e-03  -7.2 1.18e-02    -  1.00e+00 1.00e+00h  1
+ 412  3.3423625e+03 1.28e-06 8.53e-03  -7.2 7.63e-03    -  1.00e+00 1.00e+00h  1
+ 413  3.3423624e+03 3.04e-06 6.64e-03  -7.2 1.66e-02    -  1.00e+00 1.00e+00h  1
+ 414  3.3423708e+03 1.17e-08 9.77e-04  -7.2 4.14e-01    -  1.00e+00 1.00e+00H  1
+ 415  3.3423525e+03 3.98e-03 2.25e-01  -7.9 1.79e-01    -  1.00e+00 1.00e+00f  1
+ 416  3.3423933e+03 4.26e-03 4.08e-01  -6.6 3.89e-01    -  1.00e+00 1.00e+00h  1
+ 417  3.3423774e+03 2.11e-03 1.10e-01  -6.7 2.72e-01    -  1.00e+00 1.00e+00h  1
+ 418  3.3423966e+03 7.21e-07 1.58e-01  -6.7 3.17e-01    -  8.77e-01 1.00e+00H  1
+ 419  3.3423788e+03 5.12e-04 1.01e-01  -6.7 2.30e-01    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 420  3.3423869e+03 3.02e-04 1.76e-01  -6.7 1.94e-01    -  1.00e+00 9.21e-01h  1
+ 421  3.3423769e+03 1.80e-04 2.98e-02  -6.7 1.57e-01    -  1.00e+00 1.00e+00f  1
+ 422  3.3423782e+03 1.21e-04 8.33e-02  -6.7 5.97e-02    -  1.00e+00 1.00e+00h  1
+ 423  3.3423774e+03 8.83e-05 1.52e-02  -6.7 3.97e-02    -  1.00e+00 1.00e+00h  1
+ 424  3.3423776e+03 1.98e-06 1.03e-02  -6.7 3.05e-03    -  1.00e+00 1.00e+00h  1
+ 425  3.3423776e+03 1.43e-07 4.73e-04  -6.7 1.61e-03    -  1.00e+00 1.00e+00h  1
+ 426  3.3423776e+03 1.33e-06 6.77e-03  -6.7 2.03e-02    -  1.00e+00 1.00e+00h  1
+ 427  3.3423778e+03 2.50e-10 1.16e-03  -6.7 9.73e-02    -  1.00e+00 1.00e+00H  1
+ 428  3.3423597e+03 2.00e-05 3.80e-02  -7.5 5.17e-02    -  8.98e-01 9.43e-01f  1
+ 429  3.3423590e+03 1.77e-05 1.18e-02  -7.4 7.91e-02    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 430  3.3423591e+03 3.83e-07 3.74e-03  -7.4 5.35e-04  -2.3 1.00e+00 1.00e+00h  1
+ 431  3.3423556e+03 1.18e-06 1.08e-02  -8.2 2.45e-03  -2.8 1.00e+00 1.00e+00h  1
+ 432  3.3423555e+03 1.24e-06 2.70e-02  -9.9 1.77e-01    -  7.23e-01 3.05e-02h  1
+ 433  3.3423554e+03 1.51e-05 1.56e-02  -8.9 1.69e-01    -  1.00e+00 3.01e-01h  1
+ 434  3.3423553e+03 1.90e-05 2.09e-02  -8.6 2.01e-01    -  1.00e+00 2.20e-01h  1
+ 435  3.3423550e+03 1.01e-07 1.14e-03  -8.9 4.44e-05  -0.2 1.00e+00 9.95e-01h  1
+ 436  3.3423549e+03 6.92e-09 1.07e-04  -9.2 1.75e-05   0.3 1.00e+00 1.00e+00h  1
+ 437  3.3423549e+03 2.86e-08 1.57e-04 -10.0 4.40e-05  -0.2 1.00e+00 7.88e-01h  1
+ 438  3.3423549e+03 2.85e-08 8.38e-04 -10.9 5.56e-01    -  6.21e-01 4.68e-04h  1
+ 439  3.3423548e+03 3.18e-05 3.98e-02  -9.7 1.53e-01    -  1.00e+00 1.61e-01h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+ 440  3.3423549e+03 9.05e-09 3.65e-04  -9.7 1.96e-05   0.2 9.91e-01 1.00e+00h  1
+ 441  3.3423549e+03 2.80e-08 2.58e-04 -10.3 7.62e-02    -  2.37e-01 1.25e-02h  1
+ 442  3.3423549e+03 9.65e-09 3.79e-04  -9.8 2.00e-05   0.1 1.00e+00 1.00e+00h  1
+ 443  3.3423549e+03 2.65e-08 7.28e-05  -9.8 5.66e-05  -0.4 8.27e-01 7.62e-01h  1
+
+Number of Iterations....: 443
+
+                                   (scaled)                 (unscaled)
+Objective...............:   9.4036740238864979e+01    3.3423548683623299e+03
+Dual infeasibility......:   7.2787324596029017e-05    2.5870853041124421e-03
+Constraint violation....:   2.0200893985195837e-09    2.6450821533074986e-08
+Variable bound violation:   9.9423018030259103e-09    9.9423018030259103e-09
+Complementarity.........:   1.8302169816931251e-10    6.5051538615469777e-09
+Overall NLP error.......:   7.2787324596029017e-05    2.5870853041124421e-03
+
+
+Number of objective function evaluations             = 487
+Number of objective gradient evaluations             = 444
+Number of equality constraint evaluations            = 487
+Number of inequality constraint evaluations          = 487
+Number of equality constraint Jacobian evaluations   = 444
+Number of inequality constraint Jacobian evaluations = 444
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 1127.972
+
+EXIT: Optimal Solution Found.
+      solver  :   t_proc      (avg)   t_wall      (avg)    n_eval
+       nlp_f  |   8.96 s ( 18.40ms)   9.06 s ( 18.60ms)       487
+       nlp_g  |   9.08 s ( 18.65ms)   9.17 s ( 18.83ms)       487
+  nlp_grad_f  |  43.50 s ( 97.53ms)  43.91 s ( 98.45ms)       446
+   nlp_jac_g  | 690.64 s (  1.55 s) 696.24 s (  1.56 s)       445
+       total  |   1.12ks (  1.12ks)   1.13ks (  1.13ks)         1
+ 
+...Exit NLP solver. Time elapsed 1133.46 s
+ 
+ 
+Retrieving solution...
+ 
+Saving results as: /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSimResults/SUBJ04opt3D/SUBJ04opt3D_13417254.mat
+ 
+ 
+Start PostProcessing...
+ 
+ 
+...PostProcessing done. Time elapsed 1.50 s
+ 
+ 
+Total time elapsed 1152.72 s
+ 
+Diary saved as /vscmnt/brussel_pixiu_data/_data_brussel/112/vsc11236/PredSim-versions/PredSim-v1.2.0/PredSimResults/SUBJ04opt3D/SUBJ04opt3D_13417254_log.txt
+ 
+ 
+>> [Warning: A Java exception occurred trying to load the
+com/mathworks/hg/peer/JOGLInitializer class:
+Java exception occurred:
+java.lang.UnsatisfiedLinkError:
+com.mathworks.hg.GraphicsOpenGL.shouldDisableOpenGLARBContext()Z
+	at com.mathworks.hg.GraphicsOpenGL.shouldDisableOpenGLARBContext(Native
+    Method)
+	at com.mathworks.hg.peer.JOGLInitializer.<clinit>(JOGLInitializer.java:18)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at
+    com.mathworks.jmi.OpaqueJavaInterface.findClass(OpaqueJavaInterface.java:137)] 
+LAPACK: unloading libraries
+BLAS: unloading libraries

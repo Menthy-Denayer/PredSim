@@ -37,7 +37,7 @@ function specific_tension = getSpecificTensions(S, muscleNames)
 % along with PredSim. If not, see <https://www.gnu.org/licenses/>.
 % --------------------------------------------------------------------------
 
-specific_tension = 0.25*ones(length(muscleNames),1);
+specific_tension = 0.70*ones(length(muscleNames),1);                            % returned to previous PredSim default
 
 if isnumeric(S.subject.default_specific_tension) && S.subject.default_specific_tension > 0
     specific_tension(:) = S.subject.default_specific_tension;

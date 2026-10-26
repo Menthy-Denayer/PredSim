@@ -96,6 +96,10 @@ if ~isempty(varargin)
     if isfile(reference_path)
         disp(['Initialising settings from "',reference_path,'".'])
         run(reference_path);
+    % If given path directly links to settings file, added by Menthy to accomodate personalization
+    elseif(isfile(varargin{1}))
+        disp(['Initialising settings from "',varargin{1},'".'])
+        run(varargin{1});
     else
         warning(['Could not initialise from "',reference_path,'". ',...
             'Ignoring input argument "',varargin{1},'".']);

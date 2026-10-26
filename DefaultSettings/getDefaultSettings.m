@@ -165,8 +165,10 @@ if ~isfield(S,'misc')
     S.misc = [];
 end
 
-% subject folder to save intermediate data
-S.misc.subject_path = fullfile(S.misc.main_path,'Subjects',S.subject.name);
+% subject folder to save intermediate data, added field to allow you to choose location yourself 
+if(~isfield(S.misc,'subject_path'))
+    S.misc.subject_path = fullfile(S.misc.main_path,'Subjects',S.subject.name);
+end
 
 % average velocity you want the model to have, in meters per second
 if ~isfield(S.misc,'forward_velocity')

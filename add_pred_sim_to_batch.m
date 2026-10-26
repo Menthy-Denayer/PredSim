@@ -86,7 +86,7 @@ catch
 end
 
 % Add job to batch
-batch(myCluster,PredSim_fun,0,{S,osim_path},'CurrentFolder',S.misc.main_path,...
+batch(myCluster,PredSim_fun,3,{S,osim_path},'CurrentFolder',S.misc.main_path,...    %changed to 3 outputs for personalization
     'AdditionalPaths',additional_paths);
 
 % Return optional outputs

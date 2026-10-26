@@ -39,26 +39,29 @@ if isenv('EBROOTOPENSIM')
 end
 
 % if the CasADi-MATLAB module is loaded, expose its matlab bindings
-if isenv('EBROOTCASADIMINMATLAB')
-    addpath(fullfile(getenv('EBROOTCASADIMINMATLAB'), 'matlab'))
+if isenv('EBROOTCASADI')
+    addpath(fullfile(getenv('EBROOTCASADI'), 'matlab'))
 end
 
 %% Initialize S
 
-[S] = initializeSettings('Falisse_et_al_2022');
+[S] = initializeSettings('SUBJ04opt3D');
 
 %% Settings
 
 % name of the subject
-S.subject.name = 'Falisse_et_al_2022';
+S.subject.name = 'SUBJ04opt3D';
 
 % path to folder where you want to store the results of the OCP
 S.misc.save_folder  = fullfile(pathRepoFolder,'PredSimResults',S.subject.name); 
 
 % either choose "quasi-random" or give the path to a .mot file you want to use as initial guess
-S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+% S.solver.IG_selection = fullfile(S.misc.main_path,'OCP','IK_Guess_Full_GC.mot');
+S.solver.IG_selection = fullfile(S.misc.main_path,'Subjects',S.subject.name,"SUBJ04opt3D_13359915_100Meshes_zeroMTP.mot")
 S.solver.IG_selection_gaitCyclePercent = 100;
 % S.solver.IG_selection = 'quasi-random';
+S.solver.N_meshes = 100;
+S.misc.forward_velocity = 2;    
 
 % give the path to the osim model of your subject
 osim_path = fullfile(pathRepo,'Subjects',S.subject.name,[S.subject.name '.osim']);

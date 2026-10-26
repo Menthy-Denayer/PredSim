@@ -1,4 +1,4 @@
-function [] = PostProcessing(S,model_info,f_casadi)
+function [R] = PostProcessing(S,model_info,f_casadi)
 % --------------------------------------------------------------------------
 % PostProcessing
 %   This function calls subfunctions that post-process the simulation

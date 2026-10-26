@@ -54,18 +54,22 @@ elseif ~isempty(S.solver.CasADi_path) && ~isfolder(S.solver.CasADi_path)
 end
 
 % Disable OpenSim log files
-org.opensim.modeling.Logger.setLevelString("off");
+% org.opensim.modeling.Logger.setLevelString("off");                            % turned off for parallel workers to find OpenSim
 
 if S.solver.run_as_batch_job
     % add to batch
     [savename] = add_pred_sim_to_batch(S,osim_path);
 else
     % run
-    [savename] = run_pred_sim(S,osim_path);
+    [savename, R, model_info] = run_pred_sim(S,osim_path);                      % extra outputs for personalization
 end
 
 if nargout == 1
     varargout{1} = savename;
+elseif nargout == 3                                                             % accomodate extra outputs for personalization
+    varargout{1} = savename;
+    varargout{2} = R;
+    varargout{3} = model_info;
 end
 
 end
